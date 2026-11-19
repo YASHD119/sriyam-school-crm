@@ -8,9 +8,10 @@ import {
   ShieldCheck, 
   AlertCircle, 
   ArrowRight,
-  Fingerprint,
+  BookOpen,
+  Award,
   CheckCircle2,
-  KeyRound
+  Building2
 } from 'lucide-react';
 import { UserSession } from '../types';
 import { INITIAL_USERS } from '../data/mockData';
@@ -20,12 +21,12 @@ interface LoginPageProps {
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  // Empty inputs by default - no prefilled or displayed passwords
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedRoleHint, setSelectedRoleHint] = useState<'ADMIN' | 'STUDENT'>('ADMIN');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,88 +73,109 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
       // Failed authentication
       setIsLoading(false);
-      setErrorMessage('Invalid username or password. Please check your credentials.');
-    }, 400);
-  };
-
-  const fillCredentials = (type: 'ADMIN' | 'STUDENT') => {
-    setErrorMessage(null);
-    setSelectedRoleHint(type);
-    if (type === 'ADMIN') {
-      setUsername('admin');
-      setPassword('admin123');
-    } else {
-      setUsername('student');
-      setPassword('student123');
-    }
+      setErrorMessage('Invalid username or password. Please verify your credentials and try again.');
+    }, 450);
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-4 sm:p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row font-sans bg-slate-50">
       
-      {/* Background Decorative Lighting & Grids */}
-      <div className="absolute inset-0 bg-[radial-gradient(#15803d_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none" />
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-800/20 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Main Login Card */}
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden relative z-10 animate-in fade-in zoom-in-95 duration-300">
+      {/* Left Column: Full-Height Institutional Showcase */}
+      <div className="lg:w-1/2 bg-gradient-to-br from-emerald-900 via-emerald-950 to-slate-950 p-8 sm:p-12 lg:p-16 flex flex-col justify-between text-white relative overflow-hidden">
         
-        {/* Card Header with Crest */}
-        <div className="bg-gradient-to-br from-emerald-800 via-emerald-900 to-slate-950 p-7 text-center text-white relative">
-          <div className="mx-auto w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-emerald-300 shadow-xl mb-3 ring-4 ring-emerald-500/20">
-            <GraduationCap className="w-8 h-8" />
+        {/* Subtle geometric pattern & ambient lighting */}
+        <div className="absolute inset-0 bg-[radial-gradient(#15803d_1px,transparent_1px)] [background-size:28px_28px] opacity-20 pointer-events-none" />
+        <div className="absolute -top-32 -left-32 w-80 h-80 bg-emerald-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Top Header / School Crest */}
+        <div className="relative z-10">
+          <div className="flex items-center space-x-3.5 mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-800 flex items-center justify-center text-white shadow-xl shadow-emerald-950/40 ring-4 ring-emerald-400/20">
+              <GraduationCap className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <span className="font-extrabold text-white tracking-wider text-xl leading-none block">
+                SRIYAM
+              </span>
+              <span className="text-xs text-emerald-300 font-semibold tracking-widest uppercase">
+                School & Junior College
+              </span>
+            </div>
           </div>
 
-          <h1 className="text-xl font-extrabold tracking-tight">
-            SRIYAM SCHOOL & JUNIOR COLLEGE
-          </h1>
-          <p className="text-xs text-emerald-200/80 font-medium mt-1">
-            Enterprise CRM & Secure Student Learning Portal
-          </p>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-800/40 border border-emerald-500/30 text-xs font-semibold text-emerald-300 mb-6">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span>Authorized Institutional Portal</span>
+          </div>
 
-          <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-[11px] font-semibold text-emerald-200">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Encrypted Document DRM Sentinel</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
+            Excellence in Education,<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-100">
+              Integrity in Character.
+            </span>
+          </h2>
+
+          <p className="text-sm text-slate-300 max-w-lg leading-relaxed">
+            Welcome to the centralized management system of Sriyam School. Access student records, admissions pipeline, fee reconciliation, and confidential curriculum materials under enforced DRM security.
+          </p>
+        </div>
+
+        {/* Key Features List */}
+        <div className="relative z-10 my-8 space-y-4 max-w-md">
+          <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-300 shrink-0">
+              <BookOpen className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white">Protected Curriculum Vault</h4>
+              <p className="text-[11px] text-slate-300 mt-0.5">
+                Proprietary study materials rendered live with dynamic forensic student watermarks.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-300 shrink-0">
+              <Building2 className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white">Complete School CRM & SIS</h4>
+              <p className="text-[11px] text-slate-300 mt-0.5">
+                From initial admission inquiry and student enrollment to fee invoices and attendance.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Form Body */}
-        <div className="p-7 space-y-5">
-          
-          {/* Quick Demo Switcher Pills */}
-          <div>
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center justify-between">
-              <span>Quick Demo Autofill:</span>
-              <span className="text-[10px] text-emerald-700 font-semibold">1-Click to Test</span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => fillCredentials('ADMIN')}
-                className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition ${
-                  selectedRoleHint === 'ADMIN'
-                    ? 'bg-purple-50 border-purple-300 text-purple-900 shadow-sm'
-                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                <KeyRound className="w-3.5 h-3.5 text-purple-600" />
-                <span>Admin (admin / admin123)</span>
-              </button>
+        {/* Footer info */}
+        <div className="relative z-10 pt-6 border-t border-emerald-800/60 flex items-center justify-between text-xs text-slate-400">
+          <span>Est. 2004 • CBSE & State Board Affiliated</span>
+          <span>Security Protocol: TLS 1.3</span>
+        </div>
+      </div>
 
-              <button
-                type="button"
-                onClick={() => fillCredentials('STUDENT')}
-                className={`py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition ${
-                  selectedRoleHint === 'STUDENT'
-                    ? 'bg-emerald-50 border-emerald-300 text-emerald-900 shadow-sm'
-                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Student (Read-Only)</span>
-              </button>
+      {/* Right Column: Full-Height Clean Login Form */}
+      <div className="lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-16 bg-white">
+        <div className="w-full max-w-md space-y-8">
+          
+          {/* Header */}
+          <div>
+            <div className="inline-flex lg:hidden items-center space-x-2.5 mb-6">
+              <div className="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white">
+                <GraduationCap className="w-5 h-5" />
+              </div>
+              <span className="font-extrabold text-slate-900 tracking-tight text-lg">
+                SRIYAM SCHOOL
+              </span>
             </div>
+
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Sign In to Sriyam Portal
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-2">
+              Enter your institutional credentials below to access your account.
+            </p>
           </div>
 
           {/* Error Banner */}
@@ -161,7 +183,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <div 
               role="alert"
               aria-live="polite"
-              className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2 animate-in fade-in"
+              className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5 animate-in fade-in"
             >
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <div className="font-medium">{errorMessage}</div>
@@ -169,14 +191,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           )}
 
           {/* Form */}
-          <form onSubmit={handleLogin} className="space-y-4">
-            {/* Username Input */}
+          <form onSubmit={handleLogin} className="space-y-5">
+            {/* Username Field */}
             <div>
               <label 
                 htmlFor="username"
-                className="block text-xs font-bold text-slate-700 mb-1.5"
+                className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
               >
-                Username or Student Roll Number
+                Username or Roll Number
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -190,25 +212,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   autoFocus
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="e.g. admin or SRI-2026-1042"
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+                  placeholder="Enter your username or roll number"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                 />
               </div>
             </div>
 
-            {/* Password Input */}
+            {/* Password Field */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label 
-                  htmlFor="password"
-                  className="block text-xs font-bold text-slate-700"
-                >
-                  Password
-                </label>
-                <span className="text-[11px] text-slate-400 font-medium">
-                  Default: <code className="font-mono text-emerald-700 font-bold">admin123</code>
-                </span>
-              </div>
+              <label 
+                htmlFor="password"
+                className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2"
+              >
+                Password
+              </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                   <Lock className="w-4 h-4" />
@@ -221,7 +238,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+                  className="w-full pl-10 pr-11 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                 />
                 <button
                   type="button"
@@ -234,20 +251,19 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               </div>
             </div>
 
-            {/* Remember & Protection Notice */}
+            {/* Remember Me & Help */}
             <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
               <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input 
                   type="checkbox" 
                   defaultChecked 
-                  className="rounded text-emerald-600 focus:ring-emerald-500 w-3.5 h-3.5"
+                  className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 border-slate-300"
                 />
-                <span>Remember session</span>
+                <span>Keep me signed in</span>
               </label>
 
-              <span className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
-                <Lock className="w-3 h-3" />
-                <span>SSL Encrypted</span>
+              <span className="text-slate-400 text-[11px]">
+                Protected Session
               </span>
             </div>
 
@@ -255,40 +271,33 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs shadow-lg shadow-emerald-700/20 flex items-center justify-center gap-2 transition disabled:opacity-60"
+              className="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-xl shadow-emerald-700/20 flex items-center justify-center gap-2 transition disabled:opacity-60"
             >
               {isLoading ? (
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>Sign In to Sriyam Portal</span>
+                  <span>Sign In</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Student Policy Notice */}
-          <div className="pt-3 border-t border-slate-100 text-center">
-            <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-left space-y-1">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">
-                <Fingerprint className="w-3.5 h-3.5 text-amber-600" />
-                <span>Student Content Protection Notice</span>
+          {/* Security & Access Advisory */}
+          <div className="pt-6 border-t border-slate-100">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-slate-500 text-xs space-y-1.5">
+              <div className="flex items-center gap-1.5 font-bold text-slate-700">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span>Security Notice</span>
               </div>
-              <p className="text-[11px] text-amber-800/90 leading-relaxed">
-                Student logins have strict <strong>read-only</strong> access. All accessed study materials are dynamically watermarked with the student's name, roll number, and IP address.
+              <p className="text-[11px] leading-relaxed">
+                Access to this system is restricted to authorized Sriyam School personnel and enrolled students. Student accounts operate in read-only mode with content protection and watermark logging.
               </p>
             </div>
           </div>
 
         </div>
-
-      </div>
-
-      {/* Footer Branding */}
-      <div className="mt-6 text-center text-xs text-slate-400 space-y-1 z-10">
-        <div>Sriyam School & Junior College • Academic Management System v2.4</div>
-        <div className="text-[11px] text-slate-500">Authorized Personnel & Enrolled Students Only</div>
       </div>
 
     </div>
