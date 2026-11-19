@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { LoginPage } from './components/LoginPage';
 import { Navbar } from './components/Navbar';
 import { Sidebar, TabType } from './components/Sidebar';
 import { LeadPipelineView } from './components/LeadPipelineView';
@@ -23,7 +24,7 @@ import {
 import { UserSession, Lead, StudentRecord, ProtectedDocument, FeeInvoice, Notice, SecurityAuditLog } from './types';
 
 export function App() {
-  const [currentUser, setCurrentUser] = useState<UserSession>(INITIAL_USERS[0]); // Starts as Admin
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null); // Unauthenticated by default
   const [currentTab, setCurrentTab] = useState<TabType>('overview');
   
   // App State
@@ -37,13 +38,34 @@ export function App() {
   // Active secure viewer modal
   const [activeProtectedDoc, setActiveProtectedDoc] = useState<ProtectedDocument | null>(null);
 
-  const isStudent = currentUser.role === 'STUDENT';
+  const isStudent = currentUser?.role === 'STUDENT';
+
+  // Handle successful login
+  const handleLoginSuccess = (user: UserSession) => {
+    setCurrentUser(user);
+    setCurrentTab('overview');
+    logSecurityEvent({
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      actorName: `${user.name} (${user.studentDetails?.rollNo || user.role})`,
+      actorRole: user.role,
+      action: 'STUDENT_LOGIN',
+      ipAddress: user.studentDetails?.ipAddress?.split(' ')[0] || '127.0.0.1',
+      status: 'LOGGED',
+      details: `${user.role} logged in via authentication page. Session started.`
+    });
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setActiveProtectedDoc(null);
+    setCurrentTab('overview');
+  };
 
   // Handle switching users (e.g. from Admin to Student to verify read-only behavior)
   const handleSwitchUser = (newUser: UserSession) => {
     setCurrentUser(newUser);
     setCurrentTab('overview');
-    // Log login event
     logSecurityEvent({
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
       actorName: newUser.name,
@@ -51,7 +73,7 @@ export function App() {
       action: 'STUDENT_LOGIN',
       ipAddress: newUser.studentDetails?.ipAddress?.split(' ')[0] || '127.0.0.1',
       status: 'LOGGED',
-      details: `${newUser.role} session initialized. Read-only permissions enforced.`
+      details: `${newUser.role} session switched. Read-only permissions enforced.`
     });
   };
 
@@ -135,6 +157,7 @@ export function App() {
 
   // Open secure viewer and increment view count
   const handleOpenDoc = (doc: ProtectedDocument) => {
+    if (!currentUser) return;
     setDocuments(prev => prev.map(d => d.id === doc.id ? { ...d, viewsCount: d.viewsCount + 1 } : d));
     setActiveProtectedDoc(doc);
     // Log view event
@@ -150,13 +173,19 @@ export function App() {
     });
   };
 
+  // If user is not authenticated, render the LoginPage
+  if (!currentUser) {
+    return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
       
-      {/* Top Navigation Bar with Sriyam Crest & Live Persona Switcher */}
+      {/* Top Navigation Bar with Sriyam Crest, Live Switcher & Sign Out */}
       <Navbar
         currentUser={currentUser}
         onSwitchUser={handleSwitchUser}
+        onLogout={handleLogout}
       />
 
       {/* Main Container */}

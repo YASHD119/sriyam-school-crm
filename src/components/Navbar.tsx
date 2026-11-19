@@ -16,12 +16,14 @@ import { INITIAL_USERS } from '../data/mockData';
 interface NavbarProps {
   currentUser: UserSession;
   onSwitchUser: (user: UserSession) => void;
+  onLogout?: () => void;
   unreadCount?: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentUser,
   onSwitchUser,
+  onLogout,
   unreadCount = 2
 }) => {
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
@@ -152,6 +154,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {isStudent ? currentUser.studentDetails?.rollNo : currentUser.role}
               </div>
             </div>
+
+            {/* Logout Button */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="p-1.5 ml-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                title="Sign Out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
         </div>
