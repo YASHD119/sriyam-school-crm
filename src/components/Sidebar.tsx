@@ -146,12 +146,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="pt-4 border-t border-slate-100 text-center">
-        <div className="text-[11px] font-medium text-slate-500">
-          Sriyam Educational Trust
-        </div>
-        <div className="text-[10px] text-slate-400 mt-0.5">
-          Academic Year 2026-27 • Session II
+      <div className="pt-4 border-t border-slate-100 flex items-center gap-2.5">
+        <img 
+          src="/sriyam-logo.jpg" 
+          alt="Sriyam Logo" 
+          className="w-7 h-7 rounded-lg object-contain border border-slate-200 p-0.5 shrink-0 bg-white shadow-sm"
+        />
+        <div className="text-left">
+          <div className="text-[11px] font-bold text-slate-700 leading-tight">
+            Sriyam Educational Trust
+          </div>
+          <div className="text-[10px] text-slate-400 mt-0.5">
+            Academic Year 2026-27
+          </div>
         </div>
       </div>
     </aside>

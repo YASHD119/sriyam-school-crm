@@ -35,8 +35,12 @@ export const Navbar: React.FC<NavbarProps> = ({
         
         {/* Brand & Crest */}
         <div className="flex items-center space-x-3.5">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-700 via-emerald-800 to-emerald-950 flex items-center justify-center text-white shadow-md shadow-emerald-900/20 ring-2 ring-emerald-600/30">
-            <GraduationCap className="w-6 h-6 text-emerald-200" />
+          <div className="w-10 h-10 rounded-xl bg-white p-1 border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden ring-2 ring-emerald-500/20">
+            <img 
+              src="/sriyam-logo.jpg" 
+              alt="Sriyam Logo" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">

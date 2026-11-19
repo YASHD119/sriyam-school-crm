@@ -90,9 +90,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
 
         {/* Top Header / School Crest */}
         <div className="relative z-10">
-          <div className="flex items-center space-x-3.5 mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-800 flex items-center justify-center text-white shadow-xl shadow-emerald-950/40 ring-4 ring-emerald-400/20">
-              <GraduationCap className="w-7 h-7 text-white" />
+          <div className="flex items-center space-x-4 mb-8">
+            <div className="w-14 h-14 rounded-2xl bg-white p-1.5 shadow-xl shadow-emerald-950/40 ring-4 ring-emerald-400/20 flex items-center justify-center overflow-hidden">
+              <img 
+                src="/sriyam-logo.jpg" 
+                alt="Sriyam School Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <span className="font-extrabold text-white tracking-wider text-xl leading-none block">
@@ -161,13 +165,22 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           
           {/* Header */}
           <div>
-            <div className="inline-flex lg:hidden items-center space-x-2.5 mb-6">
-              <div className="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white">
-                <GraduationCap className="w-5 h-5" />
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-white p-1 border border-slate-200 shadow-sm flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/sriyam-logo.jpg" 
+                  alt="Sriyam Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <span className="font-extrabold text-slate-900 tracking-tight text-lg">
-                SRIYAM SCHOOL
-              </span>
+              <div>
+                <span className="font-extrabold text-slate-900 tracking-tight text-lg leading-none block">
+                  SRIYAM SCHOOL
+                </span>
+                <span className="text-[11px] text-slate-500 font-medium">
+                  Academic Portal & CRM
+                </span>
+              </div>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
