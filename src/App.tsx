@@ -87,6 +87,23 @@ export function App() {
     setLeads(prev => [newLead, ...prev]);
   };
 
+  // Delete lead / client
+  const handleDeleteLead = (leadId: string) => {
+    const targetLead = leads.find(l => l.id === leadId);
+    setLeads(prev => prev.filter(l => l.id !== leadId));
+    if (targetLead) {
+      logSecurityEvent({
+        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        actorName: currentUser ? `${currentUser.name} (${currentUser.role})` : 'Administrator',
+        actorRole: currentUser ? currentUser.role : 'ADMIN',
+        action: 'DOCUMENT_VIEWED',
+        ipAddress: '127.0.0.1',
+        status: 'LOGGED',
+        details: `Client / admission inquiry record for "${targetLead.studentName}" deleted from pipeline.`
+      });
+    }
+  };
+
   // Update lead status
   const handleUpdateLeadStatus = (leadId: string, nextStatus: Lead['status']) => {
     setLeads(prev => prev.map(l => {
@@ -228,6 +245,7 @@ export function App() {
               leads={leads}
               onAddLead={handleAddLead}
               onUpdateLeadStatus={handleUpdateLeadStatus}
+              onDeleteLead={handleDeleteLead}
             />
           )}
 

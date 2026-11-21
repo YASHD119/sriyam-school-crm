@@ -10,9 +10,11 @@ import {
   Plus, 
   CheckCircle2, 
   Clock, 
-  Building2,
-  X,
-  FileCheck
+  Building2, 
+  X, 
+  FileCheck,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 import { Lead } from '../types';
 
@@ -20,6 +22,7 @@ interface LeadPipelineViewProps {
   leads: Lead[];
   onAddLead: (lead: Omit<Lead, 'id' | 'createdAt'>) => void;
   onUpdateLeadStatus: (leadId: string, nextStatus: Lead['status']) => void;
+  onDeleteLead?: (leadId: string) => void;
 }
 
 const STAGES: { id: Lead['status']; title: string; color: string }[] = [
@@ -33,12 +36,14 @@ const STAGES: { id: Lead['status']; title: string; color: string }[] = [
 export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
   leads,
   onAddLead,
-  onUpdateLeadStatus
+  onUpdateLeadStatus,
+  onDeleteLead
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGrade, setSelectedGrade] = useState<string>('ALL');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
 
   // New lead form state
   const [formData, setFormData] = useState({
@@ -200,9 +205,23 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                         </div>
                       </div>
 
-                      {/* Move to next stage quick button */}
-                      {lead.status !== 'ENROLLED' && (
-                        <div className="mt-3 pt-2 border-t border-slate-100 flex justify-end">
+                      {/* Actions Footer: Delete & Move Stage */}
+                      <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+                        {onDeleteLead ? (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setLeadToDelete(lead);
+                            }}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition"
+                            title="Delete Client / Lead"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        ) : <span />}
+
+                        {lead.status !== 'ENROLLED' && (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -216,8 +235,8 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                             <span>Move Stage</span>
                             <ChevronRight className="w-3 h-3" />
                           </button>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
                   ))
                 )}
@@ -422,24 +441,92 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                 </p>
               </div>
 
-              {/* Convert to enrolled student button */}
-              {selectedLead.status !== 'ENROLLED' && (
-                <div className="pt-3 border-t border-slate-100 flex justify-between items-center">
-                  <span className="text-[11px] text-slate-500">
-                    Ready to admit student?
-                  </span>
+              {/* Action Buttons: Delete and Admission Conversion */}
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                {onDeleteLead && (
                   <button
+                    type="button"
+                    onClick={() => {
+                      setLeadToDelete(selectedLead);
+                      setSelectedLead(null);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl font-semibold text-xs border border-rose-200 transition"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete Client</span>
+                  </button>
+                )}
+
+                {selectedLead.status !== 'ENROLLED' && (
+                  <button
+                    type="button"
                     onClick={() => {
                       onUpdateLeadStatus(selectedLead.id, 'ENROLLED');
                       setSelectedLead(null);
                     }}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow-md transition"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow-md transition ml-auto"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Confirm Admission & Create Student Login</span>
+                    <span>Confirm Admission & Create Login</span>
                   </button>
-                </div>
-              )}
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {leadToDelete && (
+        <div 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-lead-title"
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
+        >
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
+            <div className="flex items-start gap-3.5 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-rose-600" />
+              </div>
+              <div>
+                <h3 id="delete-lead-title" className="text-base font-bold text-slate-900">
+                  Delete Client Record?
+                </h3>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  Are you sure you want to delete the admission lead for <strong className="text-slate-800">{leadToDelete.studentName}</strong> (Guardian: {leadToDelete.guardianName})?
+                </p>
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-slate-600 text-xs mb-5 space-y-1">
+              <div><strong>Grade Applying:</strong> {leadToDelete.gradeApplying}</div>
+              <div><strong>Contact:</strong> {leadToDelete.phone} • {leadToDelete.email}</div>
+              <div><strong>Current Stage:</strong> {leadToDelete.status.replace('_', ' ')}</div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                autoFocus
+                onClick={() => setLeadToDelete(null)}
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (onDeleteLead) {
+                    onDeleteLead(leadToDelete.id);
+                  }
+                  setLeadToDelete(null);
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-rose-700/20 transition"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete Client</span>
+              </button>
             </div>
           </div>
         </div>
