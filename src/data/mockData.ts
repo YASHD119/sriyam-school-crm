@@ -1,4 +1,4 @@
-import { UserSession, Lead, StudentRecord, ProtectedDocument, FeeInvoice, Notice, SecurityAuditLog } from '../types';
+import { UserSession, Lead, StudentRecord, ProtectedDocument, FeeInvoice, Notice, SecurityAuditLog, Course, Question, Assignment, LiveClass, AttendanceSession, CalendarEvent } from '../types';
 
 export const INITIAL_USERS: UserSession[] = [
   {
@@ -541,4 +541,247 @@ export const INITIAL_AUDIT_LOGS: SecurityAuditLog[] = [
     details: 'Super Admin authenticated via secure 2FA dashboard.'
   }
 ];
+
+export const MOCK_COURSES: Course[] = [
+  {
+    id: 'crs-1',
+    title: 'Advanced Mechanics & Gravitational Dynamics',
+    code: 'PHY-101',
+    department: 'Department of Physical Sciences',
+    semester: 'Grade 10 & 11 • Semester I',
+    instructor: 'Prof. Sunita Nair',
+    enrolledCount: 142,
+    modulesCount: 8,
+    status: 'ACTIVE',
+    description: 'Newtonian dynamics, rotating frames of reference, central gravitational potentials, and orbital mechanics with problem solving exemplars.'
+  },
+  {
+    id: 'crs-2',
+    title: 'Differential Calculus & Coordinate Geometry',
+    code: 'MTH-201',
+    department: 'Department of Mathematical Sciences',
+    semester: 'Grade 10 • Semester II',
+    instructor: 'Dr. V. R. Sharma',
+    enrolledCount: 168,
+    modulesCount: 10,
+    status: 'ACTIVE',
+    description: 'Quadratic roots, Cartesian coordinate geometry, conic sections, limits, continuity, and introductory differential calculus.'
+  },
+  {
+    id: 'crs-3',
+    title: 'Organic Reaction Mechanisms & Stereochemistry',
+    code: 'CHM-301',
+    department: 'Department of Chemical Sciences',
+    semester: 'Grade 11 & 12 • Semester I',
+    instructor: 'Dr. Ananya Roy',
+    enrolledCount: 118,
+    modulesCount: 6,
+    status: 'ACTIVE',
+    description: 'Electrophilic and nucleophilic pathways (SN1/SN2), carbocation rearrangements, CIP priority rules, and aromatic substitution reactions.'
+  },
+  {
+    id: 'crs-4',
+    title: 'Cellular Biology, Genetics & Evolution',
+    code: 'BIO-401',
+    department: 'Department of Biological Sciences',
+    semester: 'Grade 11 & 12 • Semester I',
+    instructor: 'Dr. Sneha Paul',
+    enrolledCount: 94,
+    modulesCount: 7,
+    status: 'ACTIVE',
+    description: 'Mendelian heredity, DNA replication fidelity, cellular respiration pathways, and modern CRISPR gene editing principles.'
+  }
+];
+
+export const MOCK_QUESTIONS: Question[] = [
+  {
+    id: 'q-1',
+    subject: 'Physics',
+    department: 'Physical Sciences',
+    type: 'MCQ',
+    difficulty: 'HARD',
+    text: 'A satellite orbits at altitude h = 2R above Earth. What percentage increase in kinetic energy is required to put it into a parabolic escape trajectory?',
+    options: ['50%', '100%', '141.4%', '200%'],
+    correctAnswer: '100%',
+    marks: 4
+  },
+  {
+    id: 'q-2',
+    subject: 'Chemistry',
+    department: 'Chemical Sciences',
+    type: 'MCQ',
+    difficulty: 'MEDIUM',
+    text: 'Which substrate reacts fastest via SN2 nucleophilic substitution with aqueous KOH?',
+    options: ['1-Bromopropane (Primary)', '2-Bromopropane (Secondary)', '2-Bromo-2-methylpropane (Tertiary)', 'Bromobenzene'],
+    correctAnswer: '1-Bromopropane (Primary)',
+    marks: 3
+  },
+  {
+    id: 'q-3',
+    subject: 'Mathematics',
+    department: 'Mathematical Sciences',
+    type: 'ESSAY',
+    difficulty: 'MEDIUM',
+    text: 'State and prove the Basic Proportionality Theorem (Thales Theorem). Include the altitude construction and area ratio derivation.',
+    marks: 5
+  },
+  {
+    id: 'q-4',
+    subject: 'Computer Science',
+    department: 'Computer Science & IT',
+    type: 'CODING',
+    difficulty: 'HARD',
+    text: 'Implement a binary search tree in Python that supports O(log n) average-case insertion, deletion, and in-order traversal.',
+    marks: 10
+  }
+];
+
+export const MOCK_ASSIGNMENTS: Assignment[] = [
+  {
+    id: 'asg-1',
+    title: 'Numerical Problem Set: Centripetal & Gravitational Force Equations',
+    course: 'Advanced Mechanics & Gravitational Dynamics',
+    dueDate: '2026-12-05',
+    totalMarks: 25,
+    submissionsCount: 112,
+    totalStudents: 142,
+    status: 'ACTIVE',
+    description: 'Solve problems 14 through 28 from Volume 1. Show Free Body Diagrams for all non-inertial frame cases.'
+  },
+  {
+    id: 'asg-2',
+    title: 'Proof & Exemplars: Coordinate Geometry & Tangent Slopes',
+    course: 'Differential Calculus & Coordinate Geometry',
+    dueDate: '2026-11-30',
+    totalMarks: 20,
+    submissionsCount: 154,
+    totalStudents: 168,
+    status: 'EVALUATED',
+    description: 'Calculate equations of tangents and normals to parabolas at prescribed parameter points.'
+  },
+  {
+    id: 'asg-3',
+    title: 'Reaction Pathway Diagram: Stereochemical Inversion in Alkyl Halides',
+    course: 'Organic Reaction Mechanisms & Stereochemistry',
+    dueDate: '2026-12-08',
+    totalMarks: 30,
+    submissionsCount: 45,
+    totalStudents: 118,
+    status: 'ACTIVE',
+    description: 'Construct detailed reaction coordinate energy curves comparing SN1 carbocation intermediates with SN2 pentacoordinate transition states.'
+  }
+];
+
+export const MOCK_LIVE_CLASSES: LiveClass[] = [
+  {
+    id: 'live-1',
+    title: 'Live Masterclass: Keplerian Elliptical Orbits & Orbital Energy Analysis',
+    course: 'Advanced Mechanics & Gravitational Dynamics',
+    instructor: 'Prof. Sunita Nair',
+    date: 'Today',
+    time: '11:00 AM - 12:30 PM',
+    duration: '90 Mins',
+    meetUrl: 'https://meet.sriyamschool.edu.in/phy-101-kepler',
+    status: 'LIVE'
+  },
+  {
+    id: 'live-2',
+    title: 'Interactive Tutorial: Thales Theorem Applications & Board Exam Traps',
+    course: 'Differential Calculus & Coordinate Geometry',
+    instructor: 'Dr. V. R. Sharma',
+    date: 'Tomorrow',
+    time: '09:00 AM - 10:15 AM',
+    duration: '75 Mins',
+    meetUrl: 'https://meet.sriyamschool.edu.in/mth-201-thales',
+    status: 'SCHEDULED'
+  },
+  {
+    id: 'live-3',
+    title: 'Laboratory Session: Organic Synthesis and Thin Layer Chromatography',
+    course: 'Organic Reaction Mechanisms & Stereochemistry',
+    instructor: 'Dr. Ananya Roy',
+    date: '28 Nov 2026',
+    time: '02:00 PM - 03:30 PM',
+    duration: '90 Mins',
+    meetUrl: 'https://meet.sriyamschool.edu.in/chm-301-lab',
+    status: 'SCHEDULED'
+  }
+];
+
+export const MOCK_ATTENDANCE: AttendanceSession[] = [
+  {
+    id: 'att-1',
+    date: '2026-11-25',
+    course: 'Advanced Mechanics & Dynamics',
+    section: 'Grade 10 - Section A',
+    faculty: 'Prof. Sunita Nair',
+    presentCount: 38,
+    totalCount: 40,
+    status: 'SUBMITTED'
+  },
+  {
+    id: 'att-2',
+    date: '2026-11-25',
+    course: 'Differential Calculus',
+    section: 'Grade 10 - Section B',
+    faculty: 'Dr. V. R. Sharma',
+    presentCount: 41,
+    totalCount: 42,
+    status: 'SUBMITTED'
+  },
+  {
+    id: 'att-3',
+    date: '2026-11-24',
+    course: 'Organic Chemistry Lab',
+    section: 'Grade 11 - Section A',
+    faculty: 'Dr. Ananya Roy',
+    presentCount: 34,
+    totalCount: 36,
+    status: 'SUBMITTED'
+  }
+];
+
+export const MOCK_CALENDAR_EVENTS: CalendarEvent[] = [
+  {
+    id: 'evt-1',
+    title: 'Mid-Term Physics Mock Examination',
+    date: '2026-12-02',
+    type: 'EXAM',
+    timing: '09:00 AM - 12:00 PM',
+    tag: 'All Grade 10 & 11'
+  },
+  {
+    id: 'evt-2',
+    title: 'Mathematics Core Term Paper',
+    date: '2026-12-05',
+    type: 'EXAM',
+    timing: '09:00 AM - 12:00 PM',
+    tag: 'Grade 10'
+  },
+  {
+    id: 'evt-3',
+    title: 'Assignment 1 Submission Deadline (Physics)',
+    date: '2026-12-05',
+    type: 'DEADLINE',
+    timing: '11:59 PM',
+    tag: 'PHY-101'
+  },
+  {
+    id: 'evt-4',
+    title: 'Chemistry Laboratory Assessment',
+    date: '2026-12-08',
+    type: 'EXAM',
+    timing: '01:00 PM - 04:00 PM',
+    tag: 'Grade 11 & 12'
+  },
+  {
+    id: 'evt-5',
+    title: 'Annual Sports & Cultural Meet',
+    date: '2026-12-18',
+    type: 'HOLIDAY',
+    timing: 'Full Day Event',
+    tag: 'Whole School'
+  }
+];
+
 

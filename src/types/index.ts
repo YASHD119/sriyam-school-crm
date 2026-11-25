@@ -119,3 +119,73 @@ export interface SecurityAuditLog {
   details: string;
 }
 
+// --- LMS Alignment Types (matching admin-lms.edulateral.com) ---
+
+export interface Course {
+  id: string;
+  title: string;
+  code: string;
+  department: string;
+  semester: string;
+  instructor: string;
+  enrolledCount: number;
+  modulesCount: number;
+  status: 'ACTIVE' | 'UPCOMING' | 'ARCHIVED';
+  description: string;
+}
+
+export interface Question {
+  id: string;
+  subject: string;
+  department: string;
+  type: 'MCQ' | 'ESSAY' | 'CODING';
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+  text: string;
+  options?: string[];
+  correctAnswer?: string;
+  marks: number;
+}
+
+export interface Assignment {
+  id: string;
+  title: string;
+  course: string;
+  dueDate: string;
+  totalMarks: number;
+  submissionsCount: number;
+  totalStudents: number;
+  status: 'ACTIVE' | 'EVALUATED' | 'CLOSED';
+  description: string;
+}
+
+export interface LiveClass {
+  id: string;
+  title: string;
+  course: string;
+  instructor: string;
+  date: string;
+  time: string;
+  duration: string;
+  meetUrl: string;
+  status: 'LIVE' | 'SCHEDULED' | 'COMPLETED';
+}
+
+export interface AttendanceSession {
+  id: string;
+  date: string;
+  course: string;
+  section: string;
+  faculty: string;
+  presentCount: number;
+  totalCount: number;
+  status: 'SUBMITTED' | 'PENDING';
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  date: string;
+  type: 'EXAM' | 'LECTURE' | 'DEADLINE' | 'HOLIDAY';
+  timing: string;
+  tag: string;
+}

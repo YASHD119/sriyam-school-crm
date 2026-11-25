@@ -10,11 +10,9 @@ import {
   Plus, 
   CheckCircle2, 
   Clock, 
-  Building2, 
-  X, 
-  FileCheck,
-  Trash2,
-  AlertTriangle
+  Building2,
+  X,
+  FileCheck
 } from 'lucide-react';
 import { Lead } from '../types';
 
@@ -22,7 +20,6 @@ interface LeadPipelineViewProps {
   leads: Lead[];
   onAddLead: (lead: Omit<Lead, 'id' | 'createdAt'>) => void;
   onUpdateLeadStatus: (leadId: string, nextStatus: Lead['status']) => void;
-  onDeleteLead?: (leadId: string) => void;
 }
 
 const STAGES: { id: Lead['status']; title: string; color: string }[] = [
@@ -36,14 +33,12 @@ const STAGES: { id: Lead['status']; title: string; color: string }[] = [
 export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
   leads,
   onAddLead,
-  onUpdateLeadStatus,
-  onDeleteLead
+  onUpdateLeadStatus
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGrade, setSelectedGrade] = useState<string>('ALL');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
 
   // New lead form state
   const [formData, setFormData] = useState({
@@ -172,32 +167,17 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                       onClick={() => setSelectedLead(lead)}
                       className="bg-white rounded-xl p-3.5 border border-slate-200 hover:border-emerald-400 shadow-sm hover:shadow-md transition cursor-pointer group"
                     >
-                      {/* Priority Tag, Grade & Quick Delete */}
+                      {/* Priority Tag & Grade */}
                       <div className="flex items-center justify-between gap-1 mb-2">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                            lead.priority === 'HIGH' ? 'bg-rose-100 text-rose-800' :
-                            lead.priority === 'MEDIUM' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'
-                          }`}>
-                            {lead.priority}
-                          </span>
-                          <span className="text-[10px] font-medium text-slate-500">
-                            {lead.gradeApplying}
-                          </span>
-                        </div>
-
-                        {/* Top corner quick delete */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setLeadToDelete(lead);
-                          }}
-                          className="p-1 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition"
-                          title="Delete Client"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                          lead.priority === 'HIGH' ? 'bg-rose-100 text-rose-800' :
+                          lead.priority === 'MEDIUM' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700'
+                        }`}>
+                          {lead.priority} PRIORITY
+                        </span>
+                        <span className="text-[10px] font-medium text-slate-500">
+                          {lead.gradeApplying}
+                        </span>
                       </div>
 
                       {/* Student & Guardian */}
@@ -220,22 +200,9 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                         </div>
                       </div>
 
-                      {/* Actions Footer: Delete & Move Stage */}
-                      <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setLeadToDelete(lead);
-                          }}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 text-xs font-bold transition shadow-xs"
-                          title="Delete Client / Lead"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />
-                          <span>Delete</span>
-                        </button>
-
-                        {lead.status !== 'ENROLLED' && (
+                      {/* Move to next stage quick button */}
+                      {lead.status !== 'ENROLLED' && (
+                        <div className="mt-3 pt-2 border-t border-slate-100 flex justify-end">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -244,13 +211,13 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                                 onUpdateLeadStatus(lead.id, STAGES[currentIndex + 1].id);
                               }
                             }}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-xs font-bold transition"
+                            className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-800 hover:underline"
                           >
                             <span>Move Stage</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
+                            <ChevronRight className="w-3 h-3" />
                           </button>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   ))
                 )}
@@ -455,90 +422,24 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                 </p>
               </div>
 
-              {/* Action Buttons: Delete and Admission Conversion */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setLeadToDelete(selectedLead);
-                    setSelectedLead(null);
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl font-bold text-xs border border-rose-300 transition shadow-xs"
-                >
-                  <Trash2 className="w-3.5 h-3.5 text-rose-600" />
-                  <span>Delete Client</span>
-                </button>
-
-                {selectedLead.status !== 'ENROLLED' && (
+              {/* Convert to enrolled student button */}
+              {selectedLead.status !== 'ENROLLED' && (
+                <div className="pt-3 border-t border-slate-100 flex justify-between items-center">
+                  <span className="text-[11px] text-slate-500">
+                    Ready to admit student?
+                  </span>
                   <button
-                    type="button"
                     onClick={() => {
                       onUpdateLeadStatus(selectedLead.id, 'ENROLLED');
                       setSelectedLead(null);
                     }}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow-md transition ml-auto"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs shadow-md transition"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Confirm Admission & Create Login</span>
+                    <span>Confirm Admission & Create Student Login</span>
                   </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {leadToDelete && (
-        <div 
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="delete-lead-title"
-          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
-        >
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95">
-            <div className="flex items-start gap-3.5 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-5 h-5 text-rose-600" />
-              </div>
-              <div>
-                <h3 id="delete-lead-title" className="text-base font-bold text-slate-900">
-                  Delete Client Record?
-                </h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Are you sure you want to delete the admission lead for <strong className="text-slate-800">{leadToDelete.studentName}</strong> (Guardian: {leadToDelete.guardianName})?
-                </p>
-              </div>
-            </div>
-
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-slate-600 text-xs mb-5 space-y-1">
-              <div><strong>Grade Applying:</strong> {leadToDelete.gradeApplying}</div>
-              <div><strong>Contact:</strong> {leadToDelete.phone} • {leadToDelete.email}</div>
-              <div><strong>Current Stage:</strong> {leadToDelete.status.replace('_', ' ')}</div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <button
-                type="button"
-                autoFocus
-                onClick={() => setLeadToDelete(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (onDeleteLead) {
-                    onDeleteLead(leadToDelete.id);
-                  }
-                  setLeadToDelete(null);
-                }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-rose-700/20 transition"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                <span>Delete Client</span>
-              </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

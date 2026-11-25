@@ -12,6 +12,13 @@ import { ScheduleView } from './components/ScheduleView';
 import { StudentPortalDashboard } from './components/StudentPortalDashboard';
 import { AdminDashboardOverview } from './components/AdminDashboardOverview';
 import { SecureDocumentViewer } from './components/SecureDocumentViewer';
+import { CoursesView } from './components/CoursesView';
+import { QuestionBankView } from './components/QuestionBankView';
+import { AssignmentsView } from './components/AssignmentsView';
+import { LiveClassesView } from './components/LiveClassesView';
+import { AttendanceView } from './components/AttendanceView';
+import { CalendarView } from './components/CalendarView';
+import { AnalyticsView } from './components/AnalyticsView';
 import { 
   INITIAL_USERS, 
   MOCK_LEADS, 
@@ -19,9 +26,29 @@ import {
   MOCK_PROTECTED_DOCUMENTS, 
   MOCK_FEES, 
   MOCK_NOTICES, 
-  INITIAL_AUDIT_LOGS 
+  INITIAL_AUDIT_LOGS,
+  MOCK_COURSES,
+  MOCK_QUESTIONS,
+  MOCK_ASSIGNMENTS,
+  MOCK_LIVE_CLASSES,
+  MOCK_ATTENDANCE,
+  MOCK_CALENDAR_EVENTS
 } from './data/mockData';
-import { UserSession, Lead, StudentRecord, ProtectedDocument, FeeInvoice, Notice, SecurityAuditLog } from './types';
+import { 
+  UserSession, 
+  Lead, 
+  StudentRecord, 
+  ProtectedDocument, 
+  FeeInvoice, 
+  Notice, 
+  SecurityAuditLog,
+  Course,
+  Question,
+  Assignment,
+  LiveClass,
+  AttendanceSession,
+  CalendarEvent
+} from './types';
 
 export function App() {
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null); // Unauthenticated by default
@@ -35,10 +62,48 @@ export function App() {
   const [notices, setNotices] = useState<Notice[]>(MOCK_NOTICES);
   const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>(INITIAL_AUDIT_LOGS);
 
+  // LMS State (aligned with admin-lms.edulateral.com)
+  const [courses, setCourses] = useState<Course[]>(MOCK_COURSES);
+  const [questions, setQuestions] = useState<Question[]>(MOCK_QUESTIONS);
+  const [assignments, setAssignments] = useState<Assignment[]>(MOCK_ASSIGNMENTS);
+  const [liveClasses, setLiveClasses] = useState<LiveClass[]>(MOCK_LIVE_CLASSES);
+  const [attendanceSessions, setAttendanceSessions] = useState<AttendanceSession[]>(MOCK_ATTENDANCE);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(MOCK_CALENDAR_EVENTS);
+
   // Active secure viewer modal
   const [activeProtectedDoc, setActiveProtectedDoc] = useState<ProtectedDocument | null>(null);
 
   const isStudent = currentUser?.role === 'STUDENT';
+
+  const handleAddCourse = (newCourseData: Omit<Course, 'id' | 'enrolledCount' | 'modulesCount'>) => {
+    const crs: Course = {
+      ...newCourseData,
+      id: `crs-${Date.now()}`,
+      enrolledCount: 0,
+      modulesCount: 4
+    };
+    setCourses(prev => [crs, ...prev]);
+  };
+
+  const handleAddQuestion = (q: Question) => {
+    setQuestions(prev => [q, ...prev]);
+  };
+
+  const handleAddAssignment = (asg: Assignment) => {
+    setAssignments(prev => [asg, ...prev]);
+  };
+
+  const handleAddLiveClass = (cls: LiveClass) => {
+    setLiveClasses(prev => [cls, ...prev]);
+  };
+
+  const handleRecordAttendance = (att: AttendanceSession) => {
+    setAttendanceSessions(prev => [att, ...prev]);
+  };
+
+  const handleAddCalendarEvent = (evt: CalendarEvent) => {
+    setCalendarEvents(prev => [evt, ...prev]);
+  };
 
   // Handle successful login
   const handleLoginSuccess = (user: UserSession) => {
@@ -85,23 +150,6 @@ export function App() {
       createdAt: new Date().toISOString().split('T')[0]
     };
     setLeads(prev => [newLead, ...prev]);
-  };
-
-  // Delete lead / client
-  const handleDeleteLead = (leadId: string) => {
-    const targetLead = leads.find(l => l.id === leadId);
-    setLeads(prev => prev.filter(l => l.id !== leadId));
-    if (targetLead) {
-      logSecurityEvent({
-        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-        actorName: currentUser ? `${currentUser.name} (${currentUser.role})` : 'Administrator',
-        actorRole: currentUser ? currentUser.role : 'ADMIN',
-        action: 'DOCUMENT_VIEWED',
-        ipAddress: '127.0.0.1',
-        status: 'LOGGED',
-        details: `Client / admission inquiry record for "${targetLead.studentName}" deleted from pipeline.`
-      });
-    }
   };
 
   // Update lead status
@@ -245,7 +293,6 @@ export function App() {
               leads={leads}
               onAddLead={handleAddLead}
               onUpdateLeadStatus={handleUpdateLeadStatus}
-              onDeleteLead={handleDeleteLead}
             />
           )}
 
@@ -283,6 +330,62 @@ export function App() {
           {currentTab === 'audit' && !isStudent && (
             <AuditLogView
               logs={auditLogs}
+            />
+          )}
+
+          {currentTab === 'courses' && (
+            <CoursesView
+              courses={courses}
+              currentUser={currentUser}
+              onAddCourse={handleAddCourse}
+            />
+          )}
+
+          {currentTab === 'questions' && (
+            <QuestionBankView
+              questions={questions}
+              currentUser={currentUser}
+              onAddQuestion={handleAddQuestion}
+            />
+          )}
+
+          {currentTab === 'assignments' && (
+            <AssignmentsView
+              assignments={assignments}
+              currentUser={currentUser}
+              onAddAssignment={handleAddAssignment}
+            />
+          )}
+
+          {currentTab === 'liveclasses' && (
+            <LiveClassesView
+              liveClasses={liveClasses}
+              currentUser={currentUser}
+              onAddClass={handleAddLiveClass}
+            />
+          )}
+
+          {currentTab === 'attendance' && (
+            <AttendanceView
+              sessions={attendanceSessions}
+              currentUser={currentUser}
+              onRecordSession={handleRecordAttendance}
+            />
+          )}
+
+          {currentTab === 'calendar' && (
+            <CalendarView
+              events={calendarEvents}
+              currentUser={currentUser}
+              onAddEvent={handleAddCalendarEvent}
+            />
+          )}
+
+          {currentTab === 'analytics' && !isStudent && (
+            <AnalyticsView
+              courses={courses}
+              students={students}
+              fees={fees}
             />
           )}
 
