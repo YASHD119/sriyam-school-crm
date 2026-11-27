@@ -48,11 +48,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 SRIYAM
               </span>
               <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300/60 uppercase tracking-wider">
-                CRM & SIS
+                Admissions & Course Safe
               </span>
             </div>
             <p className="text-[11px] text-slate-500 font-medium">
-              School & Junior College
+              School & Junior College Safe Repository
             </p>
           </div>
         </div>

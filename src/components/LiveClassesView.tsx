@@ -235,3 +235,4 @@ export const LiveClassesView: React.FC<LiveClassesViewProps> = ({
     </div>
   );
 };
+

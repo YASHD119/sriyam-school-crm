@@ -62,6 +62,42 @@ export const INITIAL_USERS: UserSession[] = [
 export const MOCK_LEADS: Lead[] = [
   {
     id: 'lead-1',
+    studentName: 'Aarav Sharma',
+    guardianName: 'Rajesh Sharma',
+    email: 'aarav.sharma@student.sriyamschool.edu.in',
+    phone: '+91 98201 44521',
+    gradeApplying: 'Grade 10 (Science & Math)',
+    status: 'ENROLLED',
+    source: 'WEBSITE',
+    createdAt: '2026-11-10',
+    lastContacted: '2026-11-18',
+    notes: 'Full enrollment fee paid. 1-Month secure course safe access is active.',
+    priority: 'HIGH',
+    paymentStatus: 'PAID',
+    paidDate: '2026-11-18',
+    assignedCourseId: 'crs-1',
+    amount: 38500
+  },
+  {
+    id: 'lead-2',
+    studentName: 'Riya Patel',
+    guardianName: 'Manoj Patel',
+    email: 'riya.patel@student.sriyamschool.edu.in',
+    phone: '+91 94432 19823',
+    gradeApplying: 'Grade 12 (Advanced Chemistry)',
+    status: 'ENROLLED',
+    source: 'REFERRAL',
+    createdAt: '2026-09-20',
+    lastContacted: '2026-10-15',
+    notes: 'Initial fee was paid over a month ago. Safe access is now expired awaiting renewal.',
+    priority: 'HIGH',
+    paymentStatus: 'PAID',
+    paidDate: '2026-10-15', // Expired (> 30 days)
+    assignedCourseId: 'crs-3',
+    amount: 42000
+  },
+  {
+    id: 'lead-3',
     studentName: 'Ananya Deshmukh',
     guardianName: 'Vikram Deshmukh',
     email: 'vikram.d@corporate.in',
@@ -70,12 +106,15 @@ export const MOCK_LEADS: Lead[] = [
     status: 'TEST_SCHEDULED',
     source: 'WEBSITE',
     createdAt: '2026-11-12',
-    lastContacted: '2026-11-16',
-    notes: 'Inquired about JEE coaching integration with school curriculum. Test scheduled for Nov 22.',
-    priority: 'HIGH'
+    lastContacted: '2026-11-25',
+    notes: 'Inquired about JEE coaching integration. Payment pending verification.',
+    priority: 'HIGH',
+    paymentStatus: 'UNPAID',
+    assignedCourseId: 'crs-2',
+    amount: 45000
   },
   {
-    id: 'lead-2',
+    id: 'lead-4',
     studentName: 'Kabir Malhotra',
     guardianName: 'Sanjay Malhotra',
     email: 'sanjay.m@gmail.com',
@@ -84,12 +123,16 @@ export const MOCK_LEADS: Lead[] = [
     status: 'OFFER_MADE',
     source: 'REFERRAL',
     createdAt: '2026-11-05',
-    lastContacted: '2026-11-17',
-    notes: 'Transfer from Delhi Public School. Admission test passed with 89%. Fee invoice generated.',
-    priority: 'HIGH'
+    lastContacted: '2026-11-26',
+    notes: 'Transfer from Delhi Public School. Admission test passed with 89%. Paid admission fee today.',
+    priority: 'HIGH',
+    paymentStatus: 'PAID',
+    paidDate: '2026-11-26',
+    assignedCourseId: 'crs-1',
+    amount: 36000
   },
   {
-    id: 'lead-3',
+    id: 'lead-5',
     studentName: 'Ishaani Sen',
     guardianName: 'Dr. Debasish Sen',
     email: 'dsen.aiims@med.org',
@@ -98,12 +141,15 @@ export const MOCK_LEADS: Lead[] = [
     status: 'CAMPUS_TOUR',
     source: 'EDUCATION_FAIR',
     createdAt: '2026-11-14',
-    lastContacted: '2026-11-15',
-    notes: 'Looking for modern biology and chemistry laboratory facilities. Campus tour attended on Nov 15.',
-    priority: 'MEDIUM'
+    lastContacted: '2026-11-24',
+    notes: 'Looking for modern biology and chemistry laboratory facilities. Campus tour attended.',
+    priority: 'MEDIUM',
+    paymentStatus: 'UNPAID',
+    assignedCourseId: 'crs-4',
+    amount: 44000
   },
   {
-    id: 'lead-4',
+    id: 'lead-6',
     studentName: 'Devansh Kulkarni',
     guardianName: 'Anjali Kulkarni',
     email: 'kulkarni.anjali@fintech.co',
@@ -111,24 +157,12 @@ export const MOCK_LEADS: Lead[] = [
     gradeApplying: 'Grade 10',
     status: 'NEW_INQUIRY',
     source: 'WEBSITE',
-    createdAt: '2026-11-17',
-    lastContacted: '2026-11-17',
+    createdAt: '2026-11-22',
+    lastContacted: '2026-11-26',
     notes: 'Submitted online contact form regarding mid-term transfer feasibility and syllabus compatibility.',
-    priority: 'HIGH'
-  },
-  {
-    id: 'lead-5',
-    studentName: 'Tanvi Iyer',
-    guardianName: 'Ramesh Iyer',
-    email: 'iyer.ramesh@tech.com',
-    phone: '+91 99200 48831',
-    gradeApplying: 'Grade 6',
-    status: 'ENROLLED',
-    source: 'WALK_IN',
-    createdAt: '2026-10-28',
-    lastContacted: '2026-11-10',
-    notes: 'Admission confirmed. Welcome kit and LMS/Portal credentials dispatched.',
-    priority: 'LOW'
+    priority: 'HIGH',
+    paymentStatus: 'UNPAID',
+    amount: 38500
   }
 ];
 
@@ -553,7 +587,34 @@ export const MOCK_COURSES: Course[] = [
     enrolledCount: 142,
     modulesCount: 8,
     status: 'ACTIVE',
-    description: 'Newtonian dynamics, rotating frames of reference, central gravitational potentials, and orbital mechanics with problem solving exemplars.'
+    price: 38500,
+    description: 'Newtonian dynamics, rotating frames of reference, central gravitational potentials, and orbital mechanics with problem solving exemplars.',
+    materials: [
+      {
+        id: 'mat-phy-01',
+        title: 'Advanced Mechanics & Non-Inertial Dynamics (Vol. 1)',
+        fileName: 'PHY101_Mechanics_Proprietary_Vol1.pdf',
+        fileSize: '4.8 MB',
+        totalPages: 3,
+        uploadedAt: '18 Nov 2026',
+        encryptionAlgorithm: 'AES-256-GCM',
+        encryptionChecksum: 'sha256-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+        documentRefId: 'doc-phys-101',
+        downloadUrl: '/sample-curriculum.pdf'
+      },
+      {
+        id: 'mat-phy-02',
+        title: 'Gravitational Potential Fields & Keplerian Orbits (Vol. 2)',
+        fileName: 'PHY101_Gravitation_Complete_Notes.pdf',
+        fileSize: '6.2 MB',
+        totalPages: 3,
+        uploadedAt: '20 Nov 2026',
+        encryptionAlgorithm: 'AES-256-GCM',
+        encryptionChecksum: 'sha256-9f833a10c88e8bc584b39f20b017ae5b41297d04156c4801a3fb3a4cb76f4158',
+        documentRefId: 'doc-phys-101',
+        downloadUrl: '/sample-curriculum.pdf'
+      }
+    ]
   },
   {
     id: 'crs-2',
@@ -565,7 +626,22 @@ export const MOCK_COURSES: Course[] = [
     enrolledCount: 168,
     modulesCount: 10,
     status: 'ACTIVE',
-    description: 'Quadratic roots, Cartesian coordinate geometry, conic sections, limits, continuity, and introductory differential calculus.'
+    price: 45000,
+    description: 'Quadratic roots, Cartesian coordinate geometry, conic sections, limits, continuity, and introductory differential calculus.',
+    materials: [
+      {
+        id: 'mat-mth-01',
+        title: 'Differential Calculus & Real Analysis Core Handbook',
+        fileName: 'MTH201_Calculus_Proofs_Encrypted.pdf',
+        fileSize: '5.1 MB',
+        totalPages: 3,
+        uploadedAt: '12 Nov 2026',
+        encryptionAlgorithm: 'AES-256-GCM',
+        encryptionChecksum: 'sha256-785f397e1088dd61f4642545ba2f1ff394149639e826fb3b5220ef5424e9826f',
+        documentRefId: 'doc-math-201',
+        downloadUrl: '/sample-curriculum.pdf'
+      }
+    ]
   },
   {
     id: 'crs-3',
@@ -577,7 +653,22 @@ export const MOCK_COURSES: Course[] = [
     enrolledCount: 118,
     modulesCount: 6,
     status: 'ACTIVE',
-    description: 'Electrophilic and nucleophilic pathways (SN1/SN2), carbocation rearrangements, CIP priority rules, and aromatic substitution reactions.'
+    price: 42000,
+    description: 'Electrophilic and nucleophilic pathways (SN1/SN2), carbocation rearrangements, CIP priority rules, and aromatic substitution reactions.',
+    materials: [
+      {
+        id: 'mat-chm-01',
+        title: 'Organic Stereochemistry & Reaction Pathways',
+        fileName: 'CHM301_Reaction_Stereochem_Safe.pdf',
+        fileSize: '8.4 MB',
+        totalPages: 3,
+        uploadedAt: '05 Nov 2026',
+        encryptionAlgorithm: 'AES-256-GCM',
+        encryptionChecksum: 'sha256-ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb',
+        documentRefId: 'doc-chem-301',
+        downloadUrl: '/sample-curriculum.pdf'
+      }
+    ]
   },
   {
     id: 'crs-4',
@@ -589,7 +680,22 @@ export const MOCK_COURSES: Course[] = [
     enrolledCount: 94,
     modulesCount: 7,
     status: 'ACTIVE',
-    description: 'Mendelian heredity, DNA replication fidelity, cellular respiration pathways, and modern CRISPR gene editing principles.'
+    price: 44000,
+    description: 'Mendelian heredity, DNA replication fidelity, cellular respiration pathways, and modern CRISPR gene editing principles.',
+    materials: [
+      {
+        id: 'mat-bio-01',
+        title: 'Molecular Biology & Genetics Comprehensive Notes',
+        fileName: 'BIO401_CRISPR_Genetics_Encrypted.pdf',
+        fileSize: '7.3 MB',
+        totalPages: 3,
+        uploadedAt: '10 Nov 2026',
+        encryptionAlgorithm: 'AES-256-GCM',
+        encryptionChecksum: 'sha256-5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8',
+        documentRefId: 'doc-bio-401',
+        downloadUrl: '/sample-curriculum.pdf'
+      }
+    ]
   }
 ];
 

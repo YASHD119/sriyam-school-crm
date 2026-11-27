@@ -11,7 +11,8 @@ import {
   X, 
   AlertTriangle,
   Fingerprint,
-  Info
+  Info,
+  Download
 } from 'lucide-react';
 import { ProtectedDocument, UserSession, SecurityAuditLog } from '../types';
 
@@ -68,6 +69,26 @@ export const SecureDocumentViewer: React.FC<SecureDocumentViewerProps> = ({
       });
     }
   }, [currentUser, rollNo, userIp, doc.title, onLogSecurityEvent]);
+
+  // Admin decrypted download handler
+  const handleAdminDownload = () => {
+    if (currentUser.role !== 'ADMIN') {
+      triggerToast('Download prohibited: Only administrators can download decrypted documents.', 'alert');
+      recordEvent('PRINT_ATTEMPT_BLOCKED', 'Non-admin attempted to download document', 'BLOCKED');
+      return;
+    }
+
+    recordEvent('ADMIN_DECRYPT_DOWNLOAD', 'Super Admin decrypted original PDF and downloaded archive', 'LOGGED');
+    const dummyPdfContent = `%PDF-1.7\n1 0 obj\n<< /Title (${doc.title}) /Author (Sriyam School Super Admin) >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF`;
+    const file = new Blob([dummyPdfContent], { type: 'application/pdf' });
+    const element = document.createElement('a');
+    element.href = URL.createObjectURL(file);
+    element.download = `${doc.title.replace(/[^a-zA-Z0-9_-]/g, '_')}_Decrypted.pdf`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+    triggerToast('Admin decrypted PDF download initiated successfully.', 'warning');
+  };
 
   // Window blur & focus monitoring (Anti-screen capture & app switcher shield)
   useEffect(() => {
@@ -419,6 +440,23 @@ export const SecureDocumentViewer: React.FC<SecureDocumentViewerProps> = ({
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Admin Download vs Non-Admin Prohibited Badge */}
+          {currentUser.role === 'ADMIN' ? (
+            <button
+              onClick={handleAdminDownload}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow transition"
+              title="Super Admin Privilege: Download Decrypted Original PDF"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Admin Download PDF</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800/90 rounded-lg text-slate-400 text-xs border border-slate-700/80">
+              <Lock className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline text-[11px] font-medium text-slate-300">Downloads Prohibited</span>
+            </div>
+          )}
 
           {/* Close Viewer */}
           <button

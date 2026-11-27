@@ -1,114 +1,48 @@
 import React, { useState } from 'react';
 import { LoginPage } from './components/LoginPage';
 import { Navbar } from './components/Navbar';
-import { Sidebar, TabType } from './components/Sidebar';
+import { Sidebar } from './components/Sidebar';
 import { LeadPipelineView } from './components/LeadPipelineView';
-import { StudentDirectoryView } from './components/StudentDirectoryView';
-import { DocumentVaultView } from './components/DocumentVaultView';
-import { FeeManagementView } from './components/FeeManagementView';
-import { NoticesView } from './components/NoticesView';
-import { AuditLogView } from './components/AuditLogView';
-import { ScheduleView } from './components/ScheduleView';
-import { StudentPortalDashboard } from './components/StudentPortalDashboard';
-import { AdminDashboardOverview } from './components/AdminDashboardOverview';
-import { SecureDocumentViewer } from './components/SecureDocumentViewer';
 import { CoursesView } from './components/CoursesView';
-import { QuestionBankView } from './components/QuestionBankView';
-import { AssignmentsView } from './components/AssignmentsView';
-import { LiveClassesView } from './components/LiveClassesView';
-import { AttendanceView } from './components/AttendanceView';
-import { CalendarView } from './components/CalendarView';
-import { AnalyticsView } from './components/AnalyticsView';
+import { SecureDocumentViewer } from './components/SecureDocumentViewer';
 import { 
   INITIAL_USERS, 
   MOCK_LEADS, 
-  MOCK_STUDENTS, 
+  MOCK_COURSES, 
   MOCK_PROTECTED_DOCUMENTS, 
-  MOCK_FEES, 
-  MOCK_NOTICES, 
-  INITIAL_AUDIT_LOGS,
-  MOCK_COURSES,
-  MOCK_QUESTIONS,
-  MOCK_ASSIGNMENTS,
-  MOCK_LIVE_CLASSES,
-  MOCK_ATTENDANCE,
-  MOCK_CALENDAR_EVENTS
+  INITIAL_AUDIT_LOGS 
 } from './data/mockData';
 import { 
   UserSession, 
   Lead, 
-  StudentRecord, 
+  Course, 
+  CourseMaterial, 
   ProtectedDocument, 
-  FeeInvoice, 
-  Notice, 
+  PaymentStatus, 
   SecurityAuditLog,
-  Course,
-  Question,
-  Assignment,
-  LiveClass,
-  AttendanceSession,
-  CalendarEvent
+  TabType
 } from './types';
 
 export function App() {
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null); // Unauthenticated by default
-  const [currentTab, setCurrentTab] = useState<TabType>('overview');
+  const [currentTab, setCurrentTab] = useState<TabType>('admissions');
   
-  // App State
+  // App State: Strictly Admissions & Courses Safe
   const [leads, setLeads] = useState<Lead[]>(MOCK_LEADS);
-  const [students, setStudents] = useState<StudentRecord[]>(MOCK_STUDENTS);
-  const [documents, setDocuments] = useState<ProtectedDocument[]>(MOCK_PROTECTED_DOCUMENTS);
-  const [fees, setFees] = useState<FeeInvoice[]>(MOCK_FEES);
-  const [notices, setNotices] = useState<Notice[]>(MOCK_NOTICES);
-  const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>(INITIAL_AUDIT_LOGS);
-
-  // LMS State (aligned with admin-lms.edulateral.com)
   const [courses, setCourses] = useState<Course[]>(MOCK_COURSES);
-  const [questions, setQuestions] = useState<Question[]>(MOCK_QUESTIONS);
-  const [assignments, setAssignments] = useState<Assignment[]>(MOCK_ASSIGNMENTS);
-  const [liveClasses, setLiveClasses] = useState<LiveClass[]>(MOCK_LIVE_CLASSES);
-  const [attendanceSessions, setAttendanceSessions] = useState<AttendanceSession[]>(MOCK_ATTENDANCE);
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(MOCK_CALENDAR_EVENTS);
+  const [documents, setDocuments] = useState<ProtectedDocument[]>(MOCK_PROTECTED_DOCUMENTS);
+  const [auditLogs, setAuditLogs] = useState<SecurityAuditLog[]>(INITIAL_AUDIT_LOGS);
 
   // Active secure viewer modal
   const [activeProtectedDoc, setActiveProtectedDoc] = useState<ProtectedDocument | null>(null);
 
   const isStudent = currentUser?.role === 'STUDENT';
 
-  const handleAddCourse = (newCourseData: Omit<Course, 'id' | 'enrolledCount' | 'modulesCount'>) => {
-    const crs: Course = {
-      ...newCourseData,
-      id: `crs-${Date.now()}`,
-      enrolledCount: 0,
-      modulesCount: 4
-    };
-    setCourses(prev => [crs, ...prev]);
-  };
-
-  const handleAddQuestion = (q: Question) => {
-    setQuestions(prev => [q, ...prev]);
-  };
-
-  const handleAddAssignment = (asg: Assignment) => {
-    setAssignments(prev => [asg, ...prev]);
-  };
-
-  const handleAddLiveClass = (cls: LiveClass) => {
-    setLiveClasses(prev => [cls, ...prev]);
-  };
-
-  const handleRecordAttendance = (att: AttendanceSession) => {
-    setAttendanceSessions(prev => [att, ...prev]);
-  };
-
-  const handleAddCalendarEvent = (evt: CalendarEvent) => {
-    setCalendarEvents(prev => [evt, ...prev]);
-  };
-
   // Handle successful login
   const handleLoginSuccess = (user: UserSession) => {
     setCurrentUser(user);
-    setCurrentTab('overview');
+    // Students only have access to Course Materials Safe
+    setCurrentTab(user.role === 'STUDENT' ? 'courses' : 'admissions');
     logSecurityEvent({
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
       actorName: `${user.name} (${user.studentDetails?.rollNo || user.role})`,
@@ -116,7 +50,7 @@ export function App() {
       action: 'STUDENT_LOGIN',
       ipAddress: user.studentDetails?.ipAddress?.split(' ')[0] || '127.0.0.1',
       status: 'LOGGED',
-      details: `${user.role} logged in via authentication page. Session started.`
+      details: `${user.role} logged in. Course safe access control active.`
     });
   };
 
@@ -124,13 +58,15 @@ export function App() {
   const handleLogout = () => {
     setCurrentUser(null);
     setActiveProtectedDoc(null);
-    setCurrentTab('overview');
+    setCurrentTab('admissions');
   };
 
-  // Handle switching users (e.g. from Admin to Student to verify read-only behavior)
+  // Handle switching users (e.g. from Admin to Student to verify safe lockdown & watermark behavior)
   const handleSwitchUser = (newUser: UserSession) => {
     setCurrentUser(newUser);
-    setCurrentTab('overview');
+    if (newUser.role === 'STUDENT') {
+      setCurrentTab('courses');
+    }
     logSecurityEvent({
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
       actorName: newUser.name,
@@ -138,77 +74,8 @@ export function App() {
       action: 'STUDENT_LOGIN',
       ipAddress: newUser.studentDetails?.ipAddress?.split(' ')[0] || '127.0.0.1',
       status: 'LOGGED',
-      details: `${newUser.role} session switched. Read-only permissions enforced.`
+      details: `Switched session to ${newUser.role} (${newUser.name}). Read-only rules applied.`
     });
-  };
-
-  // Add new lead
-  const handleAddLead = (newLeadData: Omit<Lead, 'id' | 'createdAt'>) => {
-    const newLead: Lead = {
-      ...newLeadData,
-      id: `lead-${Date.now()}`,
-      createdAt: new Date().toISOString().split('T')[0]
-    };
-    setLeads(prev => [newLead, ...prev]);
-  };
-
-  // Update lead status
-  const handleUpdateLeadStatus = (leadId: string, nextStatus: Lead['status']) => {
-    setLeads(prev => prev.map(l => {
-      if (l.id === leadId) {
-        // If converting to enrolled, also create a student record!
-        if (nextStatus === 'ENROLLED' && l.status !== 'ENROLLED') {
-          const newStudent: StudentRecord = {
-            id: `stu-${Date.now()}`,
-            rollNo: `SRI-2026-${Math.floor(1000 + Math.random() * 9000)}`,
-            name: l.studentName,
-            grade: l.gradeApplying.split(' ')[0] + ' ' + l.gradeApplying.split(' ')[1],
-            section: 'A',
-            guardianName: l.guardianName,
-            phone: l.phone,
-            email: l.email,
-            attendance: 100,
-            gpa: '10.0 / 10',
-            feeStatus: 'PENDING',
-            avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
-            active: true
-          };
-          setStudents(s => [newStudent, ...s]);
-        }
-        return { ...l, status: nextStatus, lastContacted: 'Today' };
-      }
-      return l;
-    }));
-  };
-
-  // Add new student
-  const handleAddStudent = (newStudentData: Omit<StudentRecord, 'id'>) => {
-    const student: StudentRecord = {
-      ...newStudentData,
-      id: `stu-${Date.now()}`
-    };
-    setStudents(prev => [student, ...prev]);
-  };
-
-  // Add new document
-  const handleAddDocument = (newDocData: Omit<ProtectedDocument, 'id' | 'uploadedAt' | 'viewsCount'>) => {
-    const newDoc: ProtectedDocument = {
-      ...newDocData,
-      id: `doc-${Date.now()}`,
-      uploadedAt: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
-      viewsCount: 0
-    };
-    setDocuments(prev => [newDoc, ...prev]);
-  };
-
-  // Add new notice
-  const handleAddNotice = (newNoticeData: Omit<Notice, 'id' | 'publishedDate'>) => {
-    const newNotice: Notice = {
-      ...newNoticeData,
-      id: `not-${Date.now()}`,
-      publishedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-    };
-    setNotices(prev => [newNotice, ...prev]);
   };
 
   // Log security event
@@ -220,25 +87,97 @@ export function App() {
     setAuditLogs(prev => [newLog, ...prev]);
   };
 
-  // Open secure viewer and increment view count
+  // Add new lead / admission
+  const handleAddLead = (newLeadData: Omit<Lead, 'id' | 'createdAt'>) => {
+    const newLead: Lead = {
+      ...newLeadData,
+      id: `lead-${Date.now()}`,
+      createdAt: new Date().toISOString().split('T')[0]
+    };
+    setLeads(prev => [newLead, ...prev]);
+  };
+
+  // Update lead stage
+  const handleUpdateLeadStatus = (leadId: string, nextStatus: Lead['status']) => {
+    setLeads(prev => prev.map(l => {
+      if (l.id === leadId) {
+        return { ...l, status: nextStatus, lastContacted: 'Today' };
+      }
+      return l;
+    }));
+  };
+
+  // Update lead payment status (PAID / UNPAID) and paidDate
+  const handleUpdateLeadPayment = (
+    leadId: string, 
+    paymentStatus: PaymentStatus, 
+    paidDate?: string, 
+    assignedCourseId?: string
+  ) => {
+    setLeads(prev => prev.map(l => {
+      if (l.id === leadId) {
+        return {
+          ...l,
+          paymentStatus,
+          paidDate: paymentStatus === 'PAID' ? (paidDate || new Date().toISOString().split('T')[0]) : undefined,
+          assignedCourseId: assignedCourseId || l.assignedCourseId
+        };
+      }
+      return l;
+    }));
+
+    logSecurityEvent({
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      actorName: `${currentUser?.name || 'Admin'}`,
+      actorRole: currentUser?.role || 'ADMIN',
+      action: 'DOCUMENT_VIEWED',
+      ipAddress: '10.0.1.5',
+      status: 'LOGGED',
+      details: `Updated admission payment status to ${paymentStatus} for candidate ID ${leadId}. 1-Month window ${paymentStatus === 'PAID' ? 'initiated' : 'revoked'}.`
+    });
+  };
+
+  // Add new course (with initial encrypted PDF)
+  const handleAddCourse = (newCourse: Course) => {
+    setCourses(prev => [newCourse, ...prev]);
+  };
+
+  // Add encrypted material to course
+  const handleAddMaterialToCourse = (courseId: string, material: CourseMaterial, docPayload?: ProtectedDocument) => {
+    setCourses(prev => prev.map(c => {
+      if (c.id === courseId) {
+        return {
+          ...c,
+          materials: [...(c.materials || []), material]
+        };
+      }
+      return c;
+    }));
+
+    if (docPayload) {
+      setDocuments(prev => [docPayload, ...prev]);
+    }
+  };
+
+  // Open secure viewer
   const handleOpenDoc = (doc: ProtectedDocument) => {
     if (!currentUser) return;
     setDocuments(prev => prev.map(d => d.id === doc.id ? { ...d, viewsCount: d.viewsCount + 1 } : d));
     setActiveProtectedDoc(doc);
-    // Log view event
+    
     logSecurityEvent({
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      actorName: `${currentUser.name} (${currentUser.studentDetails?.rollNo || 'STAFF'})`,
+      actorName: `${currentUser.name} (${currentUser.studentDetails?.rollNo || currentUser.role})`,
       actorRole: currentUser.role,
       action: 'DOCUMENT_VIEWED',
       documentTitle: doc.title,
       ipAddress: currentUser.studentDetails?.ipAddress?.split(' ')[0] || '115.112.44.82',
       status: 'LOGGED',
-      details: 'Decrypted canvas frame presented with personalized forensic watermark.'
+      details: `Streaming encrypted document in read-only hardware canvas safe with forensic watermark.`
     });
   };
 
-  // If user is not authenticated, render the LoginPage
+  // If user is not authenticated, render LoginPage
   if (!currentUser) {
     return <LoginPage onLoginSuccess={handleLoginSuccess} />;
   }
@@ -246,7 +185,7 @@ export function App() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
       
-      {/* Top Navigation Bar with Sriyam Crest, Live Switcher & Sign Out */}
+      {/* Top Navigation Bar with Sriyam Logo, Live Switcher & Sign Out */}
       <Navbar
         currentUser={currentUser}
         onSwitchUser={handleSwitchUser}
@@ -256,149 +195,44 @@ export function App() {
       {/* Main Container */}
       <div className="max-w-7xl mx-auto w-full flex-1 flex">
         
-        {/* Navigation Sidebar */}
+        {/* Navigation Sidebar (Only Admissions & Courses) */}
         <Sidebar
           currentTab={currentTab}
           onSelectTab={setCurrentTab}
           userRole={currentUser.role}
-          documentsCount={documents.length}
+          activeLeadsCount={leads.length}
+          coursesCount={courses.length}
         />
 
-        {/* Dynamic Content Viewport */}
+        {/* Dynamic Content Viewport: Strictly Admissions and Courses */}
         <main className="flex-1 p-6 sm:p-8 overflow-y-auto">
-          {currentTab === 'overview' && (
-            isStudent ? (
-              <StudentPortalDashboard
-                currentUser={currentUser}
-                documents={documents}
-                notices={notices}
-                onOpenDoc={handleOpenDoc}
-                onNavigateTab={setCurrentTab}
-              />
-            ) : (
-              <AdminDashboardOverview
-                leads={leads}
-                students={students}
-                documents={documents}
-                fees={fees}
-                logs={auditLogs}
-                onNavigateTab={setCurrentTab}
-                onOpenDoc={handleOpenDoc}
-              />
-            )
-          )}
-
-          {currentTab === 'leads' && !isStudent && (
+          {currentTab === 'admissions' && !isStudent && (
             <LeadPipelineView
               leads={leads}
+              courses={courses}
               onAddLead={handleAddLead}
               onUpdateLeadStatus={handleUpdateLeadStatus}
-            />
-          )}
-
-          {currentTab === 'students' && !isStudent && (
-            <StudentDirectoryView
-              students={students}
-              onAddStudent={handleAddStudent}
-            />
-          )}
-
-          {currentTab === 'vault' && (
-            <DocumentVaultView
-              documents={documents}
-              currentUser={currentUser}
-              onOpenViewer={handleOpenDoc}
-              onAddDocument={handleAddDocument}
-            />
-          )}
-
-          {currentTab === 'fees' && (
-            <FeeManagementView
-              fees={fees}
-              currentUser={currentUser}
-            />
-          )}
-
-          {currentTab === 'notices' && (
-            <NoticesView
-              notices={notices}
-              currentUser={currentUser}
-              onAddNotice={handleAddNotice}
-            />
-          )}
-
-          {currentTab === 'audit' && !isStudent && (
-            <AuditLogView
-              logs={auditLogs}
+              onUpdateLeadPayment={handleUpdateLeadPayment}
             />
           )}
 
           {currentTab === 'courses' && (
             <CoursesView
               courses={courses}
+              leads={leads}
               currentUser={currentUser}
+              documents={documents}
+              onOpenDocument={handleOpenDoc}
               onAddCourse={handleAddCourse}
-            />
-          )}
-
-          {currentTab === 'questions' && (
-            <QuestionBankView
-              questions={questions}
-              currentUser={currentUser}
-              onAddQuestion={handleAddQuestion}
-            />
-          )}
-
-          {currentTab === 'assignments' && (
-            <AssignmentsView
-              assignments={assignments}
-              currentUser={currentUser}
-              onAddAssignment={handleAddAssignment}
-            />
-          )}
-
-          {currentTab === 'liveclasses' && (
-            <LiveClassesView
-              liveClasses={liveClasses}
-              currentUser={currentUser}
-              onAddClass={handleAddLiveClass}
-            />
-          )}
-
-          {currentTab === 'attendance' && (
-            <AttendanceView
-              sessions={attendanceSessions}
-              currentUser={currentUser}
-              onRecordSession={handleRecordAttendance}
-            />
-          )}
-
-          {currentTab === 'calendar' && (
-            <CalendarView
-              events={calendarEvents}
-              currentUser={currentUser}
-              onAddEvent={handleAddCalendarEvent}
-            />
-          )}
-
-          {currentTab === 'analytics' && !isStudent && (
-            <AnalyticsView
-              courses={courses}
-              students={students}
-              fees={fees}
-            />
-          )}
-
-          {currentTab === 'schedule' && (
-            <ScheduleView
-              currentUser={currentUser}
+              onAddMaterialToCourse={handleAddMaterialToCourse}
+              onLogSecurityEvent={logSecurityEvent}
             />
           )}
         </main>
       </div>
 
-      {/* Secure Canvas Document Viewer (Anti-Download & Anti-Screenshot) */}
-      {activeProtectedDoc && (
+      {/* Full-Screen Anti-Leak Secure DRM Document Viewer Modal */}
+      {activeProtectedDoc && currentUser && (
         <SecureDocumentViewer
           document={activeProtectedDoc}
           currentUser={currentUser}
@@ -406,10 +240,7 @@ export function App() {
           onLogSecurityEvent={logSecurityEvent}
         />
       )}
-
     </div>
   );
 }
-
 export default App;
-

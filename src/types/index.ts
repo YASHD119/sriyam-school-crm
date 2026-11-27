@@ -1,5 +1,7 @@
 export type UserRole = 'ADMIN' | 'TEACHER' | 'STUDENT';
 
+export type TabType = 'admissions' | 'courses';
+
 export interface StudentProfile {
   rollNo: string;
   grade: string;
@@ -24,6 +26,8 @@ export interface UserSession {
   studentDetails?: StudentProfile;
 }
 
+export type PaymentStatus = 'PAID' | 'UNPAID';
+
 export interface Lead {
   id: string;
   studentName: string;
@@ -37,6 +41,12 @@ export interface Lead {
   lastContacted: string;
   notes: string;
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  
+  // Payment & Safe Access Control (1 month window from paidDate)
+  paymentStatus: PaymentStatus;
+  paidDate?: string; // YYYY-MM-DD
+  assignedCourseId?: string;
+  amount?: number;
 }
 
 export interface StudentRecord {
@@ -81,6 +91,34 @@ export interface ProtectedDocument {
   pages: DocumentPage[];
 }
 
+export interface CourseMaterial {
+  id: string;
+  title: string;
+  fileName: string;
+  fileSize: string;
+  totalPages: number;
+  uploadedAt: string;
+  encryptionAlgorithm: 'AES-256-GCM' | 'RSA-4096-OAEP';
+  encryptionChecksum: string;
+  documentRefId?: string;
+  downloadUrl?: string; // For Admin Decrypted Download
+}
+
+export interface Course {
+  id: string;
+  title: string;
+  code: string;
+  department: string;
+  semester: string;
+  instructor: string;
+  enrolledCount: number;
+  modulesCount: number;
+  status: 'ACTIVE' | 'UPCOMING' | 'ARCHIVED';
+  description: string;
+  price?: number;
+  materials: CourseMaterial[];
+}
+
 export interface FeeInvoice {
   id: string;
   studentId: string;
@@ -112,28 +150,14 @@ export interface SecurityAuditLog {
   timestamp: string;
   actorName: string;
   actorRole: UserRole;
-  action: 'DOCUMENT_VIEWED' | 'SCREEN_CAPTURE_BLOCKED' | 'PRINT_ATTEMPT_BLOCKED' | 'COPY_ATTEMPT_BLOCKED' | 'STUDENT_LOGIN' | 'TAB_SWITCH_BLUR';
+  action: 'DOCUMENT_VIEWED' | 'SCREEN_CAPTURE_BLOCKED' | 'PRINT_ATTEMPT_BLOCKED' | 'COPY_ATTEMPT_BLOCKED' | 'STUDENT_LOGIN' | 'TAB_SWITCH_BLUR' | 'ADMIN_DECRYPT_DOWNLOAD' | 'ACCESS_EXPIRED_BLOCKED';
   documentTitle?: string;
   ipAddress: string;
   status: 'BLOCKED' | 'LOGGED' | 'FLAGGED';
   details: string;
 }
 
-// --- LMS Alignment Types (matching admin-lms.edulateral.com) ---
-
-export interface Course {
-  id: string;
-  title: string;
-  code: string;
-  department: string;
-  semester: string;
-  instructor: string;
-  enrolledCount: number;
-  modulesCount: number;
-  status: 'ACTIVE' | 'UPCOMING' | 'ARCHIVED';
-  description: string;
-}
-
+// Retain compatibility interfaces if needed
 export interface Question {
   id: string;
   subject: string;

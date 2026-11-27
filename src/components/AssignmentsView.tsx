@@ -289,3 +289,4 @@ export const AssignmentsView: React.FC<AssignmentsViewProps> = ({
     </div>
   );
 };
+
