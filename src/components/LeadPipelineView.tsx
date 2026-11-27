@@ -18,8 +18,8 @@ import {
   ShieldCheck,
   Layers,
   BookOpen,
-  Info,
-  HelpCircle
+  ArrowUpDown,
+  MoreVertical
 } from 'lucide-react';
 import { Lead, PaymentStatus, Course } from '../types';
 import { checkCourseAccess } from '../utils/accessControl';
@@ -33,11 +33,11 @@ interface LeadPipelineViewProps {
 }
 
 const STAGES: { id: Lead['status']; title: string; color: string }[] = [
-  { id: 'NEW_INQUIRY', title: '1. New Inquiries', color: 'border-blue-500 bg-blue-50 text-blue-900' },
-  { id: 'CAMPUS_TOUR', title: '2. Campus Tours', color: 'border-amber-500 bg-amber-50 text-amber-900' },
-  { id: 'TEST_SCHEDULED', title: '3. Admission Test', color: 'border-purple-500 bg-purple-50 text-purple-900' },
-  { id: 'OFFER_MADE', title: '4. Offer Letter', color: 'border-emerald-500 bg-emerald-50 text-emerald-900' },
-  { id: 'ENROLLED', title: '5. Admitted / Enrolled', color: 'border-teal-600 bg-teal-50 text-teal-950' }
+  { id: 'NEW_INQUIRY', title: 'New Inquiries', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+  { id: 'CAMPUS_TOUR', title: 'Campus Tours', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+  { id: 'TEST_SCHEDULED', title: 'Admission Test', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+  { id: 'OFFER_MADE', title: 'Offer Letter', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  { id: 'ENROLLED', title: 'Enrolled', color: 'bg-teal-50 text-teal-800 border-teal-200' }
 ];
 
 export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
@@ -56,7 +56,7 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  // New lead form state with accessible defaults
+  // New lead form state
   const [formData, setFormData] = useState({
     studentName: '',
     guardianName: '',
@@ -146,217 +146,179 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5 max-w-7xl mx-auto">
       
-      {/* Friendly Senior Explanatory Header */}
-      <div className="bg-white p-6 rounded-3xl border-2 border-slate-300 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-100 border-2 border-emerald-400 flex items-center justify-center text-emerald-800 shrink-0">
-                <UserPlus className="w-7 h-7" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                  Student Admissions & Payment Safe
-                </h1>
-                <p className="text-sm text-slate-600 font-semibold mt-0.5">
-                  Check who is admitted, mark them <strong>PAID</strong> or <strong>UNPAID</strong>, and view their 1-month course safe window.
-                </p>
-              </div>
-            </div>
-          </div>
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+            Admissions & Enrollment
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Manage applicant admission records and 1-month course material safe access.
+          </p>
+        </div>
 
-          <div className="flex items-center gap-3">
-            {/* View toggle */}
-            <div className="flex items-center bg-slate-100 p-1 rounded-2xl border-2 border-slate-300">
-              <button
-                onClick={() => setViewMode('table')}
-                className={`px-4 py-2.5 rounded-xl text-sm font-bold transition cursor-pointer ${
-                  viewMode === 'table' ? 'bg-white text-slate-900 shadow-md border border-slate-300' : 'text-slate-700 hover:text-slate-900'
-                }`}
-              >
-                📋 List / Table View
-              </button>
-              <button
-                onClick={() => setViewMode('pipeline')}
-                className={`px-4 py-2.5 rounded-xl text-sm font-bold transition cursor-pointer ${
-                  viewMode === 'pipeline' ? 'bg-white text-slate-900 shadow-md border border-slate-300' : 'text-slate-700 hover:text-slate-900'
-                }`}
-              >
-                📊 Stage Cards
-              </button>
-            </div>
-
-            {/* Add New Admission button */}
+        <div className="flex items-center gap-2">
+          {/* Table / Kanban view toggle */}
+          <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
             <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-2.5 px-5 py-3 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-extrabold rounded-2xl shadow-lg shadow-emerald-900/20 transition cursor-pointer border-2 border-emerald-800"
-              aria-label="Add New Admission"
+              onClick={() => setViewMode('table')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
+                viewMode === 'table' ? 'bg-white text-slate-900 shadow-xs font-semibold' : 'text-slate-600 hover:text-slate-900'
+              }`}
             >
-              <Plus className="w-5 h-5" />
-              <span>+ Add New Admission</span>
+              Table View
+            </button>
+            <button
+              onClick={() => setViewMode('pipeline')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
+                viewMode === 'pipeline' ? 'bg-white text-slate-900 shadow-xs font-semibold' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Pipeline Board
             </button>
           </div>
-        </div>
 
-        {/* Big Plain-English Instruction Box */}
-        <div className="mt-4 p-4 bg-emerald-50 rounded-2xl border-2 border-emerald-300 flex items-start gap-3">
-          <Info className="w-6 h-6 text-emerald-700 shrink-0 mt-0.5" />
-          <div className="text-sm text-emerald-950 font-medium leading-relaxed">
-            <strong>How the 1-Month Safe Timer works:</strong> When you set an applicant's payment status to <span className="bg-emerald-200 px-2 py-0.5 rounded font-bold">PAID</span>, the system automatically opens their access to Course Materials for exactly <strong>30 days</strong>. After 30 days, their access automatically locks again until renewed.
-          </div>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-xs transition"
+          >
+            <Plus className="w-4 h-4" />
+            <span>New Admission</span>
+          </button>
         </div>
       </div>
 
-      {/* Large Senior-Friendly Summary Filter Boxes */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" role="region" aria-label="Status Filters">
-        <button 
+      {/* KPI Summary Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div 
           onClick={() => setSelectedPaymentFilter('ALL')}
-          className={`p-5 rounded-3xl border-3 text-left transition cursor-pointer ${
-            selectedPaymentFilter === 'ALL' 
-              ? 'bg-white border-emerald-600 ring-4 ring-emerald-500/20 shadow-lg' 
-              : 'bg-white border-slate-300 hover:border-slate-400'
+          className={`cursor-pointer p-4 rounded-xl border bg-white transition hover:shadow-xs ${
+            selectedPaymentFilter === 'ALL' ? 'border-emerald-500 ring-1 ring-emerald-500' : 'border-slate-200'
           }`}
         >
-          <div className="flex items-center justify-between text-sm text-slate-600 font-bold mb-1">
-            <span>All Applicants</span>
-            <Layers className="w-5 h-5 text-slate-500" />
+          <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+            <span>Total Admissions</span>
+            <Layers className="w-4 h-4 text-slate-400" />
           </div>
-          <div className="text-3xl font-black text-slate-900">{summary.total}</div>
-          <p className="text-xs text-slate-500 font-semibold mt-1">Show all registered students</p>
-        </button>
+          <div className="text-2xl font-bold text-slate-900">{summary.total}</div>
+          <div className="text-[11px] text-slate-400 mt-0.5">All registered applicants</div>
+        </div>
 
-        <button 
+        <div 
           onClick={() => setSelectedPaymentFilter('PAID_ACTIVE')}
-          className={`p-5 rounded-3xl border-3 text-left transition cursor-pointer ${
-            selectedPaymentFilter === 'PAID_ACTIVE' 
-              ? 'bg-emerald-50 border-emerald-600 ring-4 ring-emerald-500/20 shadow-lg' 
-              : 'bg-white border-slate-300 hover:border-emerald-400'
+          className={`cursor-pointer p-4 rounded-xl border bg-white transition hover:shadow-xs ${
+            selectedPaymentFilter === 'PAID_ACTIVE' ? 'border-emerald-500 ring-1 ring-emerald-500 bg-emerald-50/20' : 'border-slate-200'
           }`}
         >
-          <div className="flex items-center justify-between text-sm text-emerald-900 font-extrabold mb-1">
-            <span>✓ Paid & Active</span>
-            <Unlock className="w-5 h-5 text-emerald-700" />
+          <div className="flex items-center justify-between text-xs text-emerald-700 font-medium mb-1">
+            <span>Paid (Safe Active)</span>
+            <Unlock className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="text-3xl font-black text-emerald-800">{summary.paidActive}</div>
-          <p className="text-xs text-emerald-700 font-bold mt-1">Safe Open (&lt; 30 Days Left)</p>
-        </button>
+          <div className="text-2xl font-bold text-emerald-700">{summary.paidActive}</div>
+          <div className="text-[11px] text-emerald-600/80 mt-0.5">Active &lt; 30-day window</div>
+        </div>
 
-        <button 
+        <div 
           onClick={() => setSelectedPaymentFilter('PAID_EXPIRED')}
-          className={`p-5 rounded-3xl border-3 text-left transition cursor-pointer ${
-            selectedPaymentFilter === 'PAID_EXPIRED' 
-              ? 'bg-rose-50 border-rose-600 ring-4 ring-rose-500/20 shadow-lg' 
-              : 'bg-white border-slate-300 hover:border-rose-400'
+          className={`cursor-pointer p-4 rounded-xl border bg-white transition hover:shadow-xs ${
+            selectedPaymentFilter === 'PAID_EXPIRED' ? 'border-rose-500 ring-1 ring-rose-500 bg-rose-50/20' : 'border-slate-200'
           }`}
         >
-          <div className="flex items-center justify-between text-sm text-rose-900 font-extrabold mb-1">
-            <span>⏰ Time Expired</span>
-            <Lock className="w-5 h-5 text-rose-700" />
+          <div className="flex items-center justify-between text-xs text-rose-700 font-medium mb-1">
+            <span>Timeframe Expired</span>
+            <Lock className="w-4 h-4 text-rose-600" />
           </div>
-          <div className="text-3xl font-black text-rose-800">{summary.paidExpired}</div>
-          <p className="text-xs text-rose-700 font-bold mt-1">&gt; 30 Days Elapsed Since Paid</p>
-        </button>
+          <div className="text-2xl font-bold text-rose-700">{summary.paidExpired}</div>
+          <div className="text-[11px] text-rose-600/80 mt-0.5">&gt; 30 days since payment</div>
+        </div>
 
-        <button 
+        <div 
           onClick={() => setSelectedPaymentFilter('UNPAID')}
-          className={`p-5 rounded-3xl border-3 text-left transition cursor-pointer ${
-            selectedPaymentFilter === 'UNPAID' 
-              ? 'bg-amber-50 border-amber-600 ring-4 ring-amber-500/20 shadow-lg' 
-              : 'bg-white border-slate-300 hover:border-amber-400'
+          className={`cursor-pointer p-4 rounded-xl border bg-white transition hover:shadow-xs ${
+            selectedPaymentFilter === 'UNPAID' ? 'border-amber-500 ring-1 ring-amber-500 bg-amber-50/20' : 'border-slate-200'
           }`}
         >
-          <div className="flex items-center justify-between text-sm text-amber-900 font-extrabold mb-1">
-            <span>🔒 Unpaid / Locked</span>
-            <AlertCircle className="w-5 h-5 text-amber-700" />
+          <div className="flex items-center justify-between text-xs text-amber-800 font-medium mb-1">
+            <span>Unpaid / Locked</span>
+            <AlertCircle className="w-4 h-4 text-amber-600" />
           </div>
-          <div className="text-3xl font-black text-amber-900">{summary.unpaid}</div>
-          <p className="text-xs text-amber-800 font-bold mt-1">Safe Locked Until Paid</p>
-        </button>
+          <div className="text-2xl font-bold text-amber-800">{summary.unpaid}</div>
+          <div className="text-[11px] text-amber-700/80 mt-0.5">Awaiting fee receipt</div>
+        </div>
       </div>
 
-      {/* Senior-Accessible Search and Filter Controls */}
-      <div className="bg-white p-4 rounded-3xl border-2 border-slate-300 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="relative w-full md:w-96">
-          <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+      {/* Search and Filters Bar */}
+      <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+        <div className="relative w-full sm:w-80">
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search student by name, phone or email..."
+            placeholder="Search student, guardian, phone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 border-2 border-slate-300 rounded-2xl text-sm font-medium text-slate-900 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-600 transition"
-            aria-label="Search applicants"
+            className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-700 font-bold">Filter by Access:</span>
-            <select
-              value={selectedPaymentFilter}
-              onChange={(e) => setSelectedPaymentFilter(e.target.value as any)}
-              className="bg-slate-50 border-2 border-slate-300 text-slate-800 text-sm font-bold rounded-2xl px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
-              aria-label="Filter by Access Status"
-            >
-              <option value="ALL">Show All (Total {leads.length})</option>
-              <option value="PAID_ACTIVE">Paid & Active Safe (&lt; 30 Days)</option>
-              <option value="PAID_EXPIRED">Paid & Expired Safe (&gt; 30 Days)</option>
-              <option value="UNPAID">Unpaid (Safe Locked)</option>
-            </select>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          {/* Quick Filter Pills */}
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-slate-400 mr-1 hidden sm:inline">Status:</span>
+            {(['ALL', 'PAID_ACTIVE', 'PAID_EXPIRED', 'UNPAID'] as const).map(filter => (
+              <button
+                key={filter}
+                onClick={() => setSelectedPaymentFilter(filter)}
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition ${
+                  selectedPaymentFilter === filter
+                    ? 'bg-slate-900 text-white font-semibold'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                {filter === 'ALL' ? 'All' : filter === 'PAID_ACTIVE' ? 'Active' : filter === 'PAID_EXPIRED' ? 'Expired' : 'Unpaid'}
+              </button>
+            ))}
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-700 font-bold">Grade:</span>
-            <select
-              value={selectedGrade}
-              onChange={(e) => setSelectedGrade(e.target.value)}
-              className="bg-slate-50 border-2 border-slate-300 text-slate-800 text-sm font-bold rounded-2xl px-3 py-2.5 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
-              aria-label="Filter by Grade"
-            >
-              <option value="ALL">All Grades</option>
-              <option value="Grade 9">Grade 9</option>
-              <option value="Grade 10">Grade 10</option>
-              <option value="Grade 11">Grade 11</option>
-              <option value="Grade 12">Grade 12</option>
-            </select>
-          </div>
+          <div className="h-4 w-px bg-slate-200 mx-1 hidden sm:block" />
+
+          {/* Grade filter */}
+          <select
+            value={selectedGrade}
+            onChange={(e) => setSelectedGrade(e.target.value)}
+            className="bg-slate-50 border border-slate-200 text-slate-700 text-xs rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+          >
+            <option value="ALL">All Grades</option>
+            <option value="Grade 9">Grade 9</option>
+            <option value="Grade 10">Grade 10</option>
+            <option value="Grade 11">Grade 11</option>
+            <option value="Grade 12">Grade 12</option>
+          </select>
         </div>
       </div>
 
-      {/* Main Content: High-Readability Table View or Card View */}
+      {/* Main Table View */}
       {viewMode === 'table' ? (
-        <div className="bg-white rounded-3xl border-2 border-slate-300 shadow-sm overflow-hidden">
-          <div className="p-5 border-b-2 border-slate-200 bg-slate-50 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <ShieldCheck className="w-6 h-6 text-emerald-700" />
-              <h2 className="text-base font-black text-slate-900">
-                Admissions Roster & 1-Month Safe Timer
-              </h2>
-            </div>
-            <span className="text-sm font-bold text-slate-600">
-              Showing {filteredLeads.length} of {leads.length} applicants
-            </span>
-          </div>
-
+        <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-800" aria-label="Admissions Roster Table">
-              <thead className="bg-slate-100 border-b-2 border-slate-300 text-xs font-black uppercase tracking-wider text-slate-700">
+            <table className="w-full text-left text-xs text-slate-700">
+              <thead className="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
                 <tr>
-                  <th className="py-4 px-5">Student & Guardian</th>
-                  <th className="py-4 px-5">Assigned Course</th>
-                  <th className="py-4 px-5">Admission Stage</th>
-                  <th className="py-4 px-5">1. Payment Status</th>
-                  <th className="py-4 px-5">2. Payment Date</th>
-                  <th className="py-4 px-5">3. Course Safe Status</th>
-                  <th className="py-4 px-5 text-right">Actions</th>
+                  <th className="py-3 px-4">Student & Contact</th>
+                  <th className="py-3 px-4">Assigned Course</th>
+                  <th className="py-3 px-4">Stage</th>
+                  <th className="py-3 px-4">Payment Status</th>
+                  <th className="py-3 px-4">Payment Date</th>
+                  <th className="py-3 px-4">1-Month Safe Timer</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y-2 divide-slate-100">
+              <tbody className="divide-y divide-slate-100">
                 {filteredLeads.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="py-16 text-center text-slate-500 text-base font-semibold">
-                      No student records found matching your search.
+                    <td colSpan={7} className="py-12 text-center text-slate-400">
+                      No admission records match your search filters.
                     </td>
                   </tr>
                 ) : (
@@ -365,116 +327,110 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                     const assignedCourse = courses.find(c => c.id === lead.assignedCourseId) || courses[0];
 
                     return (
-                      <tr key={lead.id} className="hover:bg-slate-50/80 transition">
+                      <tr key={lead.id} className="hover:bg-slate-50/60 transition">
                         {/* Student Name & Contact */}
-                        <td className="py-4 px-5">
-                          <div className="font-black text-slate-900 text-base">{lead.studentName}</div>
-                          <div className="text-xs text-slate-600 font-semibold mt-0.5">
-                            Guardian: <strong className="text-slate-800">{lead.guardianName}</strong>
+                        <td className="py-3 px-4">
+                          <div className="font-semibold text-slate-900 text-xs">{lead.studentName}</div>
+                          <div className="text-[11px] text-slate-500 mt-0.5">
+                            Guardian: {lead.guardianName}
                           </div>
-                          <div className="text-xs text-slate-500 font-mono mt-0.5 flex items-center gap-1.5">
-                            <Phone className="w-3.5 h-3.5 text-slate-400" />
+                          <div className="text-[11px] text-slate-400 flex items-center gap-1 font-mono">
                             <span>{lead.phone}</span>
+                            <span>•</span>
+                            <span className="truncate max-w-[140px]">{lead.email}</span>
                           </div>
                         </td>
 
                         {/* Grade & Assigned Course */}
-                        <td className="py-4 px-5">
-                          <div className="font-bold text-slate-900 text-sm">{lead.gradeApplying}</div>
-                          <div className="inline-flex items-center gap-1.5 text-xs text-emerald-900 font-bold bg-emerald-100 px-2.5 py-1 rounded-lg mt-1 border border-emerald-300">
-                            <BookOpen className="w-3.5 h-3.5" />
-                            <span>{assignedCourse?.title || 'General Course Safe'}</span>
+                        <td className="py-3 px-4">
+                          <div className="text-slate-800 font-medium">{lead.gradeApplying}</div>
+                          <div className="inline-flex items-center gap-1 text-[11px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/50 mt-1">
+                            <BookOpen className="w-3 h-3" />
+                            <span>{assignedCourse?.title || 'Course Attached'}</span>
                           </div>
                         </td>
 
-                        {/* Pipeline Stage */}
-                        <td className="py-4 px-5">
-                          <span className={`inline-block text-xs font-black px-3 py-1 rounded-full border-2 ${
-                            lead.status === 'ENROLLED' ? 'bg-teal-100 text-teal-950 border-teal-400' :
-                            lead.status === 'OFFER_MADE' ? 'bg-emerald-100 text-emerald-950 border-emerald-400' :
-                            lead.status === 'TEST_SCHEDULED' ? 'bg-purple-100 text-purple-950 border-purple-400' :
-                            'bg-blue-100 text-blue-950 border-blue-400'
+                        {/* Stage */}
+                        <td className="py-3 px-4">
+                          <span className={`inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                            lead.status === 'ENROLLED' ? 'bg-teal-50 text-teal-800 border-teal-200' :
+                            lead.status === 'OFFER_MADE' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
+                            lead.status === 'TEST_SCHEDULED' ? 'bg-purple-50 text-purple-800 border-purple-200' :
+                            'bg-blue-50 text-blue-800 border-blue-200'
                           }`}>
                             {lead.status.replace('_', ' ')}
                           </span>
                         </td>
 
-                        {/* Payment Status Dropdown (Clear and Large for Elderly Users) */}
-                        <td className="py-4 px-5">
+                        {/* Payment Status Dropdown (Core Feature) */}
+                        <td className="py-3 px-4">
                           <select
                             value={lead.paymentStatus}
                             onChange={(e) => handleInlinePaymentChange(lead.id, e.target.value as PaymentStatus, lead.paidDate)}
-                            aria-label={`Payment status for ${lead.studentName}`}
-                            className={`text-sm font-black rounded-xl px-3 py-2 border-2 transition cursor-pointer focus:outline-none focus:ring-4 ${
+                            className={`text-xs font-semibold rounded-lg px-2.5 py-1.5 border transition cursor-pointer focus:outline-none focus:ring-2 ${
                               lead.paymentStatus === 'PAID'
-                                ? 'bg-emerald-100 text-emerald-950 border-emerald-500 focus:ring-emerald-500/20'
-                                : 'bg-rose-100 text-rose-950 border-rose-500 focus:ring-rose-500/20'
+                                ? 'bg-emerald-50 text-emerald-800 border-emerald-300 focus:ring-emerald-400'
+                                : 'bg-slate-50 text-slate-700 border-slate-300 focus:ring-slate-400'
                             }`}
                           >
-                            <option value="PAID">✓ PAID (Safe Open)</option>
-                            <option value="UNPAID">✕ UNPAID (Locked)</option>
+                            <option value="PAID">✓ PAID</option>
+                            <option value="UNPAID">✕ UNPAID</option>
                           </select>
-                          {lead.amount && (
-                            <div className="text-xs font-extrabold text-slate-600 mt-1">
-                              ₹{lead.amount.toLocaleString('en-IN')}
-                            </div>
-                          )}
                         </td>
 
-                        {/* Paid Date Selector */}
-                        <td className="py-4 px-5">
+                        {/* Payment Date */}
+                        <td className="py-3 px-4">
                           {lead.paymentStatus === 'PAID' ? (
                             <input
                               type="date"
                               value={lead.paidDate || todayStr}
                               onChange={(e) => handleInlineDateChange(lead.id, e.target.value, lead.paymentStatus)}
-                              aria-label={`Payment date for ${lead.studentName}`}
-                              className="text-xs font-bold bg-white border-2 border-slate-300 rounded-xl px-2.5 py-1.5 text-slate-800 font-mono focus:ring-4 focus:ring-emerald-500/20 focus:outline-none"
+                              className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-700 font-mono focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                             />
                           ) : (
-                            <span className="text-xs font-bold text-slate-400 italic">Fee Not Received</span>
+                            <span className="text-slate-400 italic text-[11px]">—</span>
                           )}
                         </td>
 
-                        {/* 1-Month Access Countdown (Large Senior Friendly Badges) */}
-                        <td className="py-4 px-5">
+                        {/* 1-Month Safe Timer Status */}
+                        <td className="py-3 px-4">
                           {lead.paymentStatus === 'PAID' ? (
                             access.isActive ? (
-                              <div className="space-y-1">
-                                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold bg-emerald-100 text-emerald-950 border-2 border-emerald-400">
-                                  <Unlock className="w-4 h-4 text-emerald-700" />
-                                  <span>SAFE OPEN: {access.daysRemaining} Days Left</span>
+                              <div className="space-y-0.5">
+                                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                  <Unlock className="w-3 h-3 text-emerald-600" />
+                                  <span>{access.daysRemaining} days left</span>
                                 </div>
-                                <div className="text-xs text-slate-600 font-semibold">
-                                  Valid until: <strong className="text-slate-900">{access.expiryDateString}</strong>
+                                <div className="text-[10px] text-slate-400">
+                                  Expires {access.expiryDateString}
                                 </div>
                               </div>
                             ) : (
-                              <div className="space-y-1">
-                                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold bg-rose-100 text-rose-950 border-2 border-rose-400">
-                                  <Lock className="w-4 h-4 text-rose-700" />
-                                  <span>1-MONTH ELAPSED</span>
+                              <div className="space-y-0.5">
+                                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-800 border border-rose-200">
+                                  <Lock className="w-3 h-3 text-rose-600" />
+                                  <span>Access Expired</span>
                                 </div>
-                                <div className="text-xs text-rose-700 font-bold">
-                                  Ended on: {access.expiryDateString}
+                                <div className="text-[10px] text-rose-500">
+                                  Ended {access.expiryDateString}
                                 </div>
                               </div>
                             )
                           ) : (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 text-slate-700 border-2 border-slate-300">
-                              <Lock className="w-4 h-4 text-slate-500" />
-                              <span>Safe Locked (Unpaid)</span>
-                            </div>
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] text-slate-500 bg-slate-100">
+                              <Lock className="w-3 h-3 text-slate-400" />
+                              <span>Safe Locked</span>
+                            </span>
                           )}
                         </td>
 
                         {/* Actions */}
-                        <td className="py-4 px-5 text-right">
+                        <td className="py-3 px-4 text-right">
                           <button
                             onClick={() => setSelectedLead(lead)}
-                            className="px-3.5 py-2 text-xs font-extrabold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition border-2 border-emerald-300 cursor-pointer"
+                            className="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition"
                           >
-                            View Details
+                            Details
                           </button>
                         </td>
                       </tr>
@@ -487,27 +443,27 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
         </div>
       ) : (
         /* Kanban Pipeline Board */
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {STAGES.map((stage) => {
             const stageLeads = filteredLeads.filter(l => l.status === stage.id);
 
             return (
-              <div key={stage.id} className="flex flex-col bg-slate-100 rounded-3xl p-4 border-2 border-slate-300 min-h-[520px]">
+              <div key={stage.id} className="flex flex-col bg-slate-100/70 rounded-xl p-3 border border-slate-200 min-h-[500px]">
                 {/* Column Header */}
-                <div className="flex items-center justify-between pb-3 border-b-2 border-slate-300 mb-3 px-1">
-                  <span className="text-sm font-black text-slate-800">
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-200 mb-2.5 px-1">
+                  <span className="text-xs font-bold text-slate-700">
                     {stage.title}
                   </span>
-                  <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-white text-slate-800 shadow-sm border border-slate-300">
+                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white text-slate-600 shadow-2xs border border-slate-200">
                     {stageLeads.length}
                   </span>
                 </div>
 
                 {/* Cards list */}
-                <div className="flex-1 space-y-3 overflow-y-auto">
+                <div className="flex-1 space-y-2.5 overflow-y-auto">
                   {stageLeads.length === 0 ? (
-                    <div className="h-32 border-2 border-dashed border-slate-300 rounded-2xl flex items-center justify-center text-slate-400 text-xs font-bold">
-                      No candidates in this stage
+                    <div className="h-28 border border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-400 text-xs">
+                      No candidates
                     </div>
                   ) : (
                     stageLeads.map((lead) => {
@@ -517,83 +473,64 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                         <div
                           key={lead.id}
                           onClick={() => setSelectedLead(lead)}
-                          className="bg-white rounded-2xl p-4 border-2 border-slate-300 hover:border-emerald-500 shadow-sm hover:shadow-md transition cursor-pointer group space-y-2.5"
+                          className="bg-white rounded-lg p-3 border border-slate-200 hover:border-emerald-400 shadow-2xs hover:shadow-xs transition cursor-pointer group"
                         >
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="text-xs font-black px-2 py-0.5 rounded bg-slate-100 text-slate-800 border">
+                          <div className="flex items-center justify-between gap-1 mb-1.5">
+                            <span className="text-[10px] font-semibold text-slate-500">
                               {lead.gradeApplying}
                             </span>
-                            <span className="text-xs font-bold text-slate-500">
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                              lead.priority === 'HIGH' ? 'bg-rose-50 text-rose-700' : 'bg-slate-100 text-slate-600'
+                            }`}>
                               {lead.priority}
                             </span>
                           </div>
 
-                          <h4 className="text-base font-black text-slate-900 group-hover:text-emerald-800 transition">
+                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition">
                             {lead.studentName}
                           </h4>
-                          <p className="text-xs text-slate-600 font-medium">
+                          <p className="text-[11px] text-slate-500 mb-2">
                             Guardian: {lead.guardianName}
                           </p>
 
-                          {/* Large inline payment dropdown */}
-                          <div className="pt-2 border-t-2 border-slate-100" onClick={(e) => e.stopPropagation()}>
-                            <label className="block text-xs font-black text-slate-700 mb-1">
-                              Payment:
-                            </label>
+                          {/* Payment dropdown on card */}
+                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between" onClick={(e) => e.stopPropagation()}>
+                            <span className="text-[10px] text-slate-400">Payment:</span>
                             <select
                               value={lead.paymentStatus}
                               onChange={(e) => handleInlinePaymentChange(lead.id, e.target.value as PaymentStatus, lead.paidDate)}
-                              className={`w-full text-xs font-black rounded-xl px-2.5 py-2 border-2 ${
+                              className={`text-[10px] font-bold rounded px-1.5 py-0.5 border ${
                                 lead.paymentStatus === 'PAID'
-                                  ? 'bg-emerald-100 text-emerald-950 border-emerald-400'
-                                  : 'bg-rose-100 text-rose-950 border-rose-400'
+                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                                  : 'bg-slate-50 text-slate-700 border-slate-300'
                               }`}
                             >
-                              <option value="PAID">✓ PAID (30d Access)</option>
-                              <option value="UNPAID">✕ UNPAID (Locked)</option>
+                              <option value="PAID">PAID</option>
+                              <option value="UNPAID">UNPAID</option>
                             </select>
                           </div>
 
-                          {/* 1 Month Safe Access Countdown Pill */}
-                          <div>
+                          {/* Access timer badge */}
+                          <div className="mt-1.5">
                             {lead.paymentStatus === 'PAID' ? (
                               access.isActive ? (
-                                <div className="text-xs font-extrabold text-emerald-950 bg-emerald-100 px-2.5 py-1 rounded-xl border border-emerald-400 flex items-center gap-1.5">
-                                  <Unlock className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                                  <span>Safe Open ({access.daysRemaining}d left)</span>
+                                <div className="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1">
+                                  <Unlock className="w-2.5 h-2.5" />
+                                  <span>Safe: {access.daysRemaining}d left</span>
                                 </div>
                               ) : (
-                                <div className="text-xs font-extrabold text-rose-950 bg-rose-100 px-2.5 py-1 rounded-xl border border-rose-400 flex items-center gap-1.5">
-                                  <Lock className="w-3.5 h-3.5 text-rose-700 shrink-0" />
-                                  <span>Expired (&gt;30d)</span>
+                                <div className="text-[10px] font-medium text-rose-700 bg-rose-50 px-2 py-0.5 rounded flex items-center gap-1">
+                                  <Lock className="w-2.5 h-2.5" />
+                                  <span>Expired</span>
                                 </div>
                               )
                             ) : (
-                              <div className="text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-xl border flex items-center gap-1.5">
-                                <Lock className="w-3.5 h-3.5 text-slate-400" />
+                              <div className="text-[10px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded flex items-center gap-1">
+                                <Lock className="w-2.5 h-2.5" />
                                 <span>Locked</span>
                               </div>
                             )}
                           </div>
-
-                          {/* Move to next stage button */}
-                          {lead.status !== 'ENROLLED' && (
-                            <div className="pt-2 border-t border-slate-100 flex justify-end">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const currentIndex = STAGES.findIndex(s => s.id === lead.status);
-                                  if (currentIndex < STAGES.length - 1) {
-                                    onUpdateLeadStatus(lead.id, STAGES[currentIndex + 1].id);
-                                  }
-                                }}
-                                className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-800 hover:underline"
-                              >
-                                <span>Move to Next Stage</span>
-                                <ChevronRight className="w-4 h-4" />
-                              </button>
-                            </div>
-                          )}
                         </div>
                       );
                     })
@@ -605,38 +542,28 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
         </div>
       )}
 
-      {/* Senior-Friendly New Admission Modal */}
+      {/* Add New Admission Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border-3 border-slate-300 animate-in fade-in zoom-in-95 max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-4 border-b-2 border-slate-200 mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-800">
-                  <UserPlus className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-slate-900">
-                    Register New Student Admission
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium">
-                    Fill in the details below. Mark as Paid to unlock 30 days of safe access.
-                  </p>
-                </div>
-              </div>
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <UserPlus className="w-4 h-4 text-emerald-600" />
+                <span>New Admission Inquiry</span>
+              </h3>
               <button 
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-slate-400 hover:text-slate-700 p-2 rounded-xl"
-                aria-label="Close form"
+                className="text-slate-400 hover:text-slate-600 p-1"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmitNewLead} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmitNewLead} className="space-y-3.5">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-black uppercase text-slate-700 mb-1.5">
-                    1. Student Full Name *
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Student Full Name *
                   </label>
                   <input
                     type="text"
@@ -644,12 +571,12 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                     value={formData.studentName}
                     onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
                     placeholder="e.g. Advait Nair"
-                    className="w-full text-sm px-4 py-3 border-2 border-slate-300 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-black uppercase text-slate-700 mb-1.5">
-                    2. Parent / Guardian Name *
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Guardian Name *
                   </label>
                   <input
                     type="text"
@@ -657,15 +584,15 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                     value={formData.guardianName}
                     onChange={(e) => setFormData({ ...formData, guardianName: e.target.value })}
                     placeholder="e.g. Suresh Nair"
-                    className="w-full text-sm px-4 py-3 border-2 border-slate-300 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-black uppercase text-slate-700 mb-1.5">
-                    3. Phone Number *
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Phone Number *
                   </label>
                   <input
                     type="tel"
@@ -673,32 +600,32 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91 98000 00000"
-                    className="w-full text-sm px-4 py-3 border-2 border-slate-300 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-black uppercase text-slate-700 mb-1.5">
-                    4. Email Address
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Email Address
                   </label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="student@sriyamschool.edu.in"
-                    className="w-full text-sm px-4 py-3 border-2 border-slate-300 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+                    placeholder="parent@example.com"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-black uppercase text-slate-700 mb-1.5">
-                    5. Grade Applying
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Grade Applying
                   </label>
                   <select
                     value={formData.gradeApplying}
                     onChange={(e) => setFormData({ ...formData, gradeApplying: e.target.value })}
-                    className="w-full text-sm font-bold px-4 py-3 border-2 border-slate-300 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none"
                   >
                     <option value="Grade 9">Grade 9</option>
                     <option value="Grade 10 (Science & Math)">Grade 10 (Science & Math)</option>
@@ -708,13 +635,13 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-black uppercase text-slate-700 mb-1.5">
-                    6. Assign Course Safe
+                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                    Attach Course Safe
                   </label>
                   <select
                     value={formData.assignedCourseId}
                     onChange={(e) => setFormData({ ...formData, assignedCourseId: e.target.value })}
-                    className="w-full text-sm font-bold px-4 py-3 border-2 border-slate-300 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+                    className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 focus:outline-none"
                   >
                     {courses.map(c => (
                       <option key={c.id} value={c.id}>{c.title} ({c.code})</option>
@@ -723,30 +650,30 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                 </div>
               </div>
 
-              {/* Big, Clear Payment Box */}
-              <div className="p-5 bg-emerald-50 rounded-2xl border-2 border-emerald-400 space-y-3">
-                <div className="flex items-center gap-2 text-sm font-black text-emerald-950">
-                  <CreditCard className="w-5 h-5 text-emerald-700" />
-                  <span>7. Payment Receipt (Enforces 30-Day Safe Access)</span>
+              {/* Payment Section */}
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                  <CreditCard className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Admission Payment & 1-Month Safe Access</span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-black text-slate-800 mb-1">
+                    <label className="block text-[11px] font-medium text-slate-600 mb-1">
                       Payment Status *
                     </label>
                     <select
                       value={formData.paymentStatus}
                       onChange={(e) => setFormData({ ...formData, paymentStatus: e.target.value as PaymentStatus })}
-                      className="w-full text-sm font-black px-4 py-3 bg-white border-2 border-emerald-500 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:outline-none"
+                      className="w-full text-xs font-semibold px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
                     >
-                      <option value="PAID">✓ PAID (Unlock 1-Month Safe Access)</option>
-                      <option value="UNPAID">✕ UNPAID (Keep Safe Locked)</option>
+                      <option value="PAID">PAID (Grant 1-Month Access)</option>
+                      <option value="UNPAID">UNPAID (Keep Safe Locked)</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-black text-slate-800 mb-1">
+                    <label className="block text-[11px] font-medium text-slate-600 mb-1">
                       Payment Date
                     </label>
                     <input
@@ -754,42 +681,38 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                       disabled={formData.paymentStatus !== 'PAID'}
                       value={formData.paidDate}
                       onChange={(e) => setFormData({ ...formData, paidDate: e.target.value })}
-                      className="w-full text-sm font-bold px-4 py-3 bg-white border-2 border-emerald-500 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:outline-none disabled:bg-slate-100 disabled:text-slate-400 font-mono"
+                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:outline-none disabled:bg-slate-100 disabled:text-slate-400 font-mono"
                     />
                   </div>
                 </div>
-
-                <p className="text-xs text-emerald-900 font-semibold leading-relaxed">
-                  ℹ️ If marked <strong>PAID</strong>, the student can view course materials for exactly <strong>30 days</strong> from the payment date.
-                </p>
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase text-slate-700 mb-1.5">
-                  8. Discussion / Counselor Notes
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                  Counselor Notes
                 </label>
                 <textarea
                   rows={2}
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="Notes from admission counseling or fee receipts..."
-                  className="w-full text-sm px-4 py-3 border-2 border-slate-300 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:outline-none"
+                  placeholder="Notes from initial counseling, parent queries..."
+                  className="w-full text-xs px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t-2 border-slate-200">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-5 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100 rounded-2xl transition border-2 border-slate-300 cursor-pointer"
+                  className="px-3.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 text-sm font-black bg-emerald-700 hover:bg-emerald-800 text-white rounded-2xl shadow-lg transition border-2 border-emerald-800 cursor-pointer"
+                  className="px-4 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-xs transition"
                 >
-                  Save & Confirm Admission
+                  Save Admission
                 </button>
               </div>
             </form>
@@ -797,52 +720,51 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
         </div>
       )}
 
-      {/* Lead Detail Drawer / Modal */}
+      {/* Lead Detail Modal */}
       {selectedLead && (
-        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border-3 border-slate-300 animate-in fade-in zoom-in-95">
-            <div className="flex items-center justify-between pb-4 border-b-2 border-slate-200 mb-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
               <div>
-                <span className="text-xs font-black uppercase px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-900 border border-emerald-300">
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
                   {selectedLead.gradeApplying}
                 </span>
-                <h3 className="text-xl font-black text-slate-900 mt-2">
+                <h3 className="text-base font-bold text-slate-900 mt-1">
                   {selectedLead.studentName}
                 </h3>
               </div>
               <button 
                 onClick={() => setSelectedLead(null)}
-                className="text-slate-400 hover:text-slate-700 p-2 rounded-xl"
-                aria-label="Close details"
+                className="text-slate-400 hover:text-slate-600 p-1"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-4 text-sm text-slate-700">
-              <div className="p-4 bg-slate-50 rounded-2xl border-2 border-slate-200 space-y-2">
+            <div className="space-y-3.5 text-xs text-slate-600">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-1.5">
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-bold">Guardian Name:</span>
-                  <span className="font-extrabold text-slate-900">{selectedLead.guardianName}</span>
+                  <span className="text-slate-400">Guardian Name:</span>
+                  <span className="font-semibold text-slate-800">{selectedLead.guardianName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-bold">Phone Number:</span>
-                  <span className="font-extrabold text-slate-900">{selectedLead.phone}</span>
+                  <span className="text-slate-400">Phone:</span>
+                  <span className="font-semibold text-slate-800">{selectedLead.phone}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-bold">Email:</span>
-                  <span className="font-extrabold text-slate-900">{selectedLead.email}</span>
+                  <span className="text-slate-400">Email:</span>
+                  <span className="font-semibold text-slate-800">{selectedLead.email}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-bold">Current Stage:</span>
-                  <span className="font-black text-emerald-800">{selectedLead.status}</span>
+                  <span className="text-slate-400">Stage:</span>
+                  <span className="font-bold text-emerald-700">{selectedLead.status}</span>
                 </div>
               </div>
 
-              {/* Payment & Safe Controls */}
-              <div className="p-4 bg-emerald-50 border-2 border-emerald-400 rounded-2xl space-y-3">
+              {/* Payment details */}
+              <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="font-black text-emerald-950 text-sm">Payment Status:</span>
+                  <span className="font-bold text-emerald-950">Payment Status:</span>
                   <select
                     value={selectedLead.paymentStatus}
                     onChange={(e) => {
@@ -850,17 +772,17 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                       handleInlinePaymentChange(selectedLead.id, newStatus, selectedLead.paidDate);
                       setSelectedLead({ ...selectedLead, paymentStatus: newStatus, paidDate: newStatus === 'PAID' ? (selectedLead.paidDate || todayStr) : undefined });
                     }}
-                    className="text-sm font-black rounded-xl px-3 py-1.5 bg-white border-2 border-emerald-500"
+                    className="text-xs font-bold rounded-lg px-2 py-1 bg-white border border-emerald-300"
                   >
-                    <option value="PAID">✓ PAID</option>
-                    <option value="UNPAID">✕ UNPAID</option>
+                    <option value="PAID">PAID</option>
+                    <option value="UNPAID">UNPAID</option>
                   </select>
                 </div>
 
                 {selectedLead.paymentStatus === 'PAID' ? (
-                  <div className="space-y-2 pt-2 border-t-2 border-emerald-200">
+                  <div className="space-y-1 pt-1.5 border-t border-emerald-200">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-700 font-bold text-xs">Payment Received On:</span>
+                      <span className="text-slate-600">Date Paid:</span>
                       <input
                         type="date"
                         value={selectedLead.paidDate || todayStr}
@@ -868,53 +790,49 @@ export const LeadPipelineView: React.FC<LeadPipelineViewProps> = ({
                           handleInlineDateChange(selectedLead.id, e.target.value, selectedLead.paymentStatus);
                           setSelectedLead({ ...selectedLead, paidDate: e.target.value });
                         }}
-                        className="text-xs font-bold px-2.5 py-1 border-2 border-emerald-400 rounded-xl font-mono bg-white"
+                        className="text-xs px-2 py-0.5 border border-emerald-300 rounded font-mono bg-white"
                       />
                     </div>
                     {(() => {
                       const acc = checkCourseAccess(selectedLead.paymentStatus, selectedLead.paidDate);
                       return acc.isActive ? (
-                        <div className="p-3 bg-emerald-100 rounded-xl text-emerald-950 font-black text-xs flex items-center gap-2 border border-emerald-300">
-                          <Unlock className="w-4 h-4 text-emerald-800 shrink-0" />
-                          <span>Course Safe Open: {acc.daysRemaining} days remaining (Expires on {acc.expiryDateString})</span>
+                        <div className="p-2 bg-emerald-100 rounded text-emerald-900 font-medium text-[11px] flex items-center gap-1.5">
+                          <Unlock className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                          <span>Safe Access Active: {acc.daysRemaining} days left (Expires {acc.expiryDateString})</span>
                         </div>
                       ) : (
-                        <div className="p-3 bg-rose-100 rounded-xl text-rose-950 font-black text-xs flex items-center gap-2 border border-rose-300">
-                          <Lock className="w-4 h-4 text-rose-800 shrink-0" />
-                          <span>Access Expired: 1-month period ended on {acc.expiryDateString}</span>
+                        <div className="p-2 bg-rose-100 rounded text-rose-900 font-medium text-[11px] flex items-center gap-1.5">
+                          <Lock className="w-3.5 h-3.5 text-rose-700 shrink-0" />
+                          <span>Access Expired: Ended on {acc.expiryDateString}</span>
                         </div>
                       );
                     })()}
                   </div>
                 ) : (
-                  <div className="p-3 bg-slate-100 rounded-xl text-slate-800 text-xs font-bold flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-slate-500 shrink-0" />
+                  <div className="p-2 bg-slate-100 rounded text-slate-700 text-[11px] flex items-center gap-1.5">
+                    <Lock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                     <span>Safe Locked. Change to PAID above to unlock 1 month of study materials.</span>
                   </div>
                 )}
               </div>
 
               <div>
-                <h4 className="font-black text-slate-900 mb-1">Counselor Discussion Notes:</h4>
-                <p className="p-3 bg-amber-50 border-2 border-amber-200 rounded-2xl text-slate-800 leading-relaxed text-xs font-medium">
+                <h4 className="font-bold text-slate-800 mb-1">Counselor Discussion Notes</h4>
+                <p className="p-2.5 bg-amber-50/60 border border-amber-200/60 rounded-xl text-slate-700 leading-relaxed text-xs">
                   {selectedLead.notes || 'No counseling notes recorded yet.'}
                 </p>
               </div>
 
-              {/* Confirm Admission button */}
               {selectedLead.status !== 'ENROLLED' && (
-                <div className="pt-4 border-t-2 border-slate-200 flex justify-between items-center">
-                  <span className="text-xs text-slate-500 font-bold">
-                    Admit to School?
-                  </span>
+                <div className="pt-3 border-t border-slate-100 flex justify-end">
                   <button
                     onClick={() => {
                       onUpdateLeadStatus(selectedLead.id, 'ENROLLED');
                       setSelectedLead(null);
                     }}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-2xl text-xs shadow-md transition"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg text-xs shadow-xs transition"
                   >
-                    <CheckCircle2 className="w-4 h-4" />
+                    <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>Confirm Enrollment</span>
                   </button>
                 </div>

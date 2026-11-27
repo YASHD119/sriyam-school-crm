@@ -188,8 +188,12 @@ export function App() {
       {/* Top Navigation Bar with Sriyam Logo, Live Switcher & Sign Out */}
       <Navbar
         currentUser={currentUser}
+        currentTab={currentTab}
+        onSelectTab={setCurrentTab}
         onSwitchUser={handleSwitchUser}
         onLogout={handleLogout}
+        activeLeadsCount={leads.length}
+        coursesCount={courses.length}
       />
 
       {/* Main Container */}
