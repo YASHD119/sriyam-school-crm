@@ -284,28 +284,53 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-xs sm:text-sm shadow-xl shadow-emerald-700/20 flex items-center justify-center gap-2 transition disabled:opacity-60"
+              className="w-full py-4 px-6 rounded-2xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white font-black text-base shadow-xl shadow-emerald-950/20 flex items-center justify-center gap-2 transition disabled:opacity-60 border-2 border-emerald-800 cursor-pointer"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>Sign In</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <span>Sign In to Portal</span>
+                  <ArrowRight className="w-5 h-5" />
                 </>
               )}
             </button>
           </form>
 
+          {/* Senior-Friendly Quick 1-Click Login Assist */}
+          <div className="pt-4 border-t-2 border-slate-200">
+            <div className="text-xs font-black uppercase tracking-wider text-slate-600 mb-2.5">
+              Quick 1-Click Login (Easy Testing):
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => onLoginSuccess(INITIAL_USERS[0])}
+                className="p-3.5 bg-purple-50 hover:bg-purple-100 border-2 border-purple-300 text-purple-950 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition cursor-pointer shadow-sm"
+                title="Log in directly as Dr. V. R. Sharma (Admin)"
+              >
+                <span>🔑 Log in as Admin</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => onLoginSuccess(INITIAL_USERS[2])}
+                className="p-3.5 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-300 text-emerald-950 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition cursor-pointer shadow-sm"
+                title="Log in directly as Aarav Sharma (Student)"
+              >
+                <span>🎓 Log in as Student</span>
+              </button>
+            </div>
+          </div>
+
           {/* Security & Access Advisory */}
-          <div className="pt-6 border-t border-slate-100">
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-slate-500 text-xs space-y-1.5">
-              <div className="flex items-center gap-1.5 font-bold text-slate-700">
+          <div className="pt-4 border-t border-slate-100">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-600 text-xs space-y-1.5">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 <span>Security Notice</span>
               </div>
-              <p className="text-[11px] leading-relaxed">
-                Access to this system is restricted to authorized Sriyam School personnel and enrolled students. Student accounts operate in read-only mode with content protection and watermark logging.
+              <p className="text-xs leading-relaxed font-medium">
+                Access is restricted to authorized Sriyam School personnel and enrolled students with active 1-month payment authorization.
               </p>
             </div>
           </div>

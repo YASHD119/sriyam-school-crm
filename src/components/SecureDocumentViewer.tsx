@@ -205,68 +205,67 @@ export const SecureDocumentViewer: React.FC<SecureDocumentViewerProps> = ({
 
     // 2. Top Header Bar
     ctx.fillStyle = '#0f172a';
-    ctx.fillRect(40, 36, baseWidth - 80, 2);
+    ctx.fillRect(40, 40, baseWidth - 80, 2);
 
-    ctx.font = '600 11px Inter, sans-serif';
-    ctx.fillStyle = '#475569';
-    ctx.fillText(pageData.header || 'SRIYAM SCHOOL ACADEMIC CURRICULUM VAULT', 40, 28);
+    ctx.font = '700 13px Inter, sans-serif';
+    ctx.fillStyle = '#334155';
+    ctx.fillText(pageData.header || 'SRIYAM SCHOOL ACADEMIC CURRICULUM VAULT', 40, 30);
 
     ctx.textAlign = 'right';
-    ctx.font = '600 11px Inter, sans-serif';
+    ctx.font = '700 13px Inter, sans-serif';
     ctx.fillStyle = '#15803d';
-    ctx.fillText(`SECURE READ-ONLY • PAGE ${currentPage} OF ${doc.totalPages}`, baseWidth - 40, 28);
+    ctx.fillText(`SECURE READING MODE • PAGE ${currentPage} OF ${doc.totalPages}`, baseWidth - 40, 30);
     ctx.textAlign = 'left';
 
     // 3. Document Title on Page 1
-    let y = 72;
+    let y = 80;
     if (currentPage === 1) {
       // Classification tag
       ctx.fillStyle = '#fef2f2';
-      ctx.fillRect(40, y, 170, 24);
+      ctx.fillRect(40, y, 180, 28);
       ctx.strokeStyle = '#fca5a5';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(40, y, 170, 24);
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(40, y, 180, 28);
 
       ctx.fillStyle = '#991b1b';
-      ctx.font = '700 10px Inter, sans-serif';
-      ctx.fillText('CONFIDENTIAL • READ-ONLY', 48, y + 16);
+      ctx.font = '800 12px Inter, sans-serif';
+      ctx.fillText('CONFIDENTIAL • READ-ONLY', 48, y + 19);
 
-      y += 42;
+      y += 48;
 
       ctx.fillStyle = '#0f172a';
-      ctx.font = '700 24px "Plus Jakarta Sans", sans-serif';
+      ctx.font = '800 28px "Plus Jakarta Sans", sans-serif';
       ctx.fillText(doc.title, 40, y);
 
-      y += 24;
-      ctx.fillStyle = '#64748b';
-      ctx.font = '500 13px Inter, sans-serif';
+      y += 28;
+      ctx.fillStyle = '#475569';
+      ctx.font = '600 15px Inter, sans-serif';
       ctx.fillText(`Subject: ${doc.subject}  |  Target Grade: ${doc.grade}  |  Faculty: ${doc.uploadedBy}`, 40, y);
 
-      y += 28;
-      ctx.strokeStyle = '#cbd5e1';
+      y += 32;
+      ctx.strokeStyle = '#94a3b8';
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
       ctx.moveTo(40, y);
       ctx.lineTo(baseWidth - 40, y);
       ctx.stroke();
       ctx.setLineDash([]);
-      y += 30;
+      y += 36;
     }
 
     // 4. Draw Sections
     pageData.sections.forEach((sec) => {
-      // Section Heading
+      // Section Heading (Larger for senior readability)
       ctx.fillStyle = '#0f172a';
-      ctx.font = '700 16px "Plus Jakarta Sans", sans-serif';
+      ctx.font = '800 20px "Plus Jakarta Sans", sans-serif';
       ctx.fillText(sec.title, 40, y);
-      y += 24;
+      y += 30;
 
-      // Section Paragraphs
-      ctx.fillStyle = '#334155';
-      ctx.font = '400 13px Inter, sans-serif';
+      // Section Paragraphs (16px base font with 26px line height for elder clarity)
+      ctx.fillStyle = '#1e293b';
+      ctx.font = '500 16px Inter, sans-serif';
 
       sec.body.forEach((para) => {
-        // Multi-line word wrap logic
         const words = para.split(' ');
         let line = '';
         const maxWidth = baseWidth - 80;
@@ -277,47 +276,47 @@ export const SecureDocumentViewer: React.FC<SecureDocumentViewerProps> = ({
           if (metrics.width > maxWidth && n > 0) {
             ctx.fillText(line, 40, y);
             line = words[n] + ' ';
-            y += 20;
+            y += 26;
           } else {
             line = testLine;
           }
         }
         ctx.fillText(line, 40, y);
-        y += 24;
+        y += 30;
       });
 
       // Callout box if present
       if (sec.callout) {
-        y += 4;
+        y += 6;
         ctx.fillStyle = '#eff6ff';
-        ctx.fillRect(40, y, baseWidth - 80, 48);
-        ctx.fillStyle = '#2563eb';
-        ctx.fillRect(40, y, 4, 48);
+        ctx.fillRect(40, y, baseWidth - 80, 56);
+        ctx.fillStyle = '#1d4ed8';
+        ctx.fillRect(40, y, 6, 56);
 
-        ctx.fillStyle = '#1e40af';
-        ctx.font = '600 12px Inter, sans-serif';
-        ctx.fillText(sec.callout, 54, y + 28);
-        y += 62;
+        ctx.fillStyle = '#1e3a8a';
+        ctx.font = '700 15px Inter, sans-serif';
+        ctx.fillText(sec.callout, 56, y + 34);
+        y += 72;
       }
 
       // Formulas / Diagrams if present
       if (sec.formulaOrDiagram && sec.formulaOrDiagram.length > 0) {
-        y += 4;
-        const boxHeight = sec.formulaOrDiagram.length * 24 + 20;
+        y += 6;
+        const boxHeight = sec.formulaOrDiagram.length * 28 + 24;
         ctx.fillStyle = '#f8fafc';
         ctx.fillRect(40, y, baseWidth - 80, boxHeight);
-        ctx.strokeStyle = '#e2e8f0';
+        ctx.strokeStyle = '#cbd5e1';
         ctx.strokeRect(40, y, baseWidth - 80, boxHeight);
 
         ctx.fillStyle = '#0f172a';
-        ctx.font = '500 13px "JetBrains Mono", monospace';
+        ctx.font = '600 15px "JetBrains Mono", monospace';
         sec.formulaOrDiagram.forEach((item, idx) => {
-          ctx.fillText(`• ${item}`, 56, y + 24 + idx * 24);
+          ctx.fillText(`• ${item}`, 56, y + 28 + idx * 28);
         });
-        y += boxHeight + 20;
+        y += boxHeight + 24;
       }
 
-      y += 18;
+      y += 20;
     });
 
     // 5. Canvas-level Forensic Dynamic Watermark (Baked into pixels)
@@ -397,46 +396,54 @@ export const SecureDocumentViewer: React.FC<SecureDocumentViewerProps> = ({
           <span>Watermarked to: <strong className="text-white">{studentName}</strong> ({rollNo})</span>
         </div>
 
-        {/* Toolbar Controls */}
-        <div className="flex items-center space-x-2">
+        {/* Toolbar Controls (Senior & Tremor Friendly Hit Targets) */}
+        <div className="flex items-center flex-wrap gap-3">
           {/* Zoom controls */}
-          <div className="flex items-center bg-slate-800 rounded-lg border border-slate-700/80 p-0.5">
+          <div className="flex items-center bg-slate-800 rounded-xl border-2 border-slate-700 p-1">
             <button
               onClick={() => setZoom(prev => Math.max(0.7, prev - 0.1))}
-              className="p-1.5 hover:bg-slate-700 rounded text-slate-300 hover:text-white transition"
-              title="Zoom Out"
+              className="px-3 py-2 hover:bg-slate-700 rounded-lg text-slate-200 hover:text-white transition flex items-center gap-1.5 text-xs font-bold"
+              title="Make document smaller"
+              aria-label="Zoom Out"
             >
               <ZoomOut className="w-4 h-4" />
+              <span>Zoom -</span>
             </button>
-            <span className="text-xs font-mono px-2 text-slate-300">{Math.round(zoom * 100)}%</span>
+            <span className="text-xs font-mono font-bold px-2 text-emerald-400">{Math.round(zoom * 100)}%</span>
             <button
-              onClick={() => setZoom(prev => Math.min(1.5, prev + 0.1))}
-              className="p-1.5 hover:bg-slate-700 rounded text-slate-300 hover:text-white transition"
-              title="Zoom In"
+              onClick={() => setZoom(prev => Math.min(1.6, prev + 0.1))}
+              className="px-3 py-2 hover:bg-slate-700 rounded-lg text-slate-200 hover:text-white transition flex items-center gap-1.5 text-xs font-bold"
+              title="Make document bigger"
+              aria-label="Zoom In"
             >
               <ZoomIn className="w-4 h-4" />
+              <span>Zoom +</span>
             </button>
           </div>
 
           {/* Page navigation */}
-          <div className="flex items-center bg-slate-800 rounded-lg border border-slate-700/80 p-0.5">
+          <div className="flex items-center bg-slate-800 rounded-xl border-2 border-slate-700 p-1">
             <button
               disabled={currentPage <= 1}
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              className="p-1.5 hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-transparent rounded text-slate-300 hover:text-white transition"
-              title="Previous Page"
+              className="px-3 py-2 hover:bg-slate-700 disabled:opacity-40 rounded-lg text-slate-200 hover:text-white transition flex items-center gap-1.5 text-xs font-bold cursor-pointer"
+              title="Go to previous page"
+              aria-label="Previous Page"
             >
               <ChevronLeft className="w-4 h-4" />
+              <span>Previous</span>
             </button>
-            <span className="text-xs px-2 font-medium text-slate-300">
-              {currentPage} / {doc.totalPages}
+            <span className="text-xs px-3 font-black text-white">
+              Page {currentPage} of {doc.totalPages}
             </span>
             <button
               disabled={currentPage >= doc.totalPages}
               onClick={() => setCurrentPage(p => Math.min(doc.totalPages, p + 1))}
-              className="p-1.5 hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-transparent rounded text-slate-300 hover:text-white transition"
-              title="Next Page"
+              className="px-3 py-2 hover:bg-slate-700 disabled:opacity-40 rounded-lg text-slate-200 hover:text-white transition flex items-center gap-1.5 text-xs font-bold cursor-pointer"
+              title="Go to next page"
+              aria-label="Next Page"
             >
+              <span>Next</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -445,26 +452,28 @@ export const SecureDocumentViewer: React.FC<SecureDocumentViewerProps> = ({
           {currentUser.role === 'ADMIN' ? (
             <button
               onClick={handleAdminDownload}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold shadow transition"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black shadow-lg transition border border-emerald-400 cursor-pointer"
               title="Super Admin Privilege: Download Decrypted Original PDF"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Admin Download PDF</span>
+              <Download className="w-4 h-4" />
+              <span>Admin Download PDF</span>
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800/90 rounded-lg text-slate-400 text-xs border border-slate-700/80">
-              <Lock className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden sm:inline text-[11px] font-medium text-slate-300">Downloads Prohibited</span>
+            <div className="flex items-center gap-2 px-3.5 py-2 bg-slate-800 rounded-xl text-slate-300 text-xs border border-slate-700 font-bold">
+              <Lock className="w-4 h-4 text-amber-400" />
+              <span>Reading Safe (Downloads Disabled)</span>
             </div>
           )}
 
-          {/* Close Viewer */}
+          {/* Prominent, Senior-friendly Close Button */}
           <button
             onClick={onClose}
-            className="p-2 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-lg transition ml-2 border border-slate-700 hover:border-red-500/30"
-            title="Close Viewer"
+            className="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-xl text-xs transition border-2 border-rose-400 cursor-pointer shadow-lg ml-1"
+            title="Close this document viewer"
+            aria-label="Close Document Viewer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
+            <span>✕ Close Document</span>
           </button>
         </div>
       </div>
