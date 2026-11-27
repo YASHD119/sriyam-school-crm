@@ -18,7 +18,9 @@ import {
   Sparkles, 
   ChevronDown, 
   ChevronUp,
-  FileCheck2
+  FileCheck2,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 import { Course, CourseMaterial, Lead, ProtectedDocument, UserSession } from '../types';
 import { checkCourseAccess, findStudentAdmission } from '../utils/accessControl';
@@ -30,6 +32,7 @@ interface CoursesViewProps {
   documents: ProtectedDocument[];
   onOpenDocument: (doc: ProtectedDocument) => void;
   onAddCourse: (course: Course) => void;
+  onDeleteCourse?: (courseId: string) => void;
   onAddMaterialToCourse: (courseId: string, material: CourseMaterial, docPayload?: ProtectedDocument) => void;
   onLogSecurityEvent?: (log: any) => void;
 }
@@ -41,6 +44,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
   documents,
   onOpenDocument,
   onAddCourse,
+  onDeleteCourse,
   onAddMaterialToCourse,
   onLogSecurityEvent
 }) => {
@@ -51,6 +55,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
   // Modals
   const [isAddCourseModalOpen, setIsAddCourseModalOpen] = useState(false);
   const [selectedCourseForMaterial, setSelectedCourseForMaterial] = useState<Course | null>(null);
+  const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
 
   const isAdmin = currentUser.role === 'ADMIN';
   const isTeacher = currentUser.role === 'TEACHER';
@@ -70,7 +75,6 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
     department: 'Department of Physical Sciences',
     semester: 'Grade 10 • Semester I',
     instructor: currentUser.name,
-    price: 38500,
     description: '',
     pdfTitle: '',
     pdfFileName: '',
@@ -158,7 +162,6 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
       enrolledCount: 1,
       modulesCount: 4,
       status: 'ACTIVE',
-      price: newCourseForm.price,
       description: newCourseForm.description,
       materials: [newMaterial]
     };
@@ -447,24 +450,32 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    {course.price && (
-                      <span className="text-xs font-mono font-medium text-slate-700 bg-slate-100 px-2 py-1 rounded border border-slate-200">
-                        Fee: ₹{course.price.toLocaleString('en-IN')}
-                      </span>
-                    )}
-
+                  <div className="flex items-center gap-2 shrink-0">
                     {isAdmin && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedCourseForMaterial(course);
-                        }}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-md text-xs font-semibold transition"
-                      >
-                        <Plus className="w-3 h-3 text-emerald-600" />
-                        <span>Upload PDF</span>
-                      </button>
+                      <>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedCourseForMaterial(course);
+                          }}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-md text-xs font-semibold transition"
+                        >
+                          <Plus className="w-3 h-3 text-emerald-600" />
+                          <span>Upload PDF</span>
+                        </button>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCourseToDelete(course);
+                          }}
+                          className="inline-flex items-center gap-1 px-2 py-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md text-xs font-medium transition"
+                          title="Delete Course"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">Delete</span>
+                        </button>
+                      </>
                     )}
 
                     <div className="p-1 text-slate-400">
@@ -759,6 +770,43 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Course Confirmation Modal */}
+      {courseToDelete && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-200 animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2.5 bg-rose-50 text-rose-600 rounded-xl">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">Delete Course</h3>
+                <p className="text-xs text-slate-500">This action cannot be undone.</p>
+              </div>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed mb-4">
+              Are you sure you want to delete <strong className="text-slate-900">{courseToDelete.title} ({courseToDelete.code})</strong> and its {courseToDelete.materials?.length || 0} protected safe files?
+            </p>
+            <div className="flex items-center justify-end gap-2">
+              <button
+                onClick={() => setCourseToDelete(null)}
+                className="px-3.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (onDeleteCourse) onDeleteCourse(courseToDelete.id);
+                  setCourseToDelete(null);
+                }}
+                className="px-3.5 py-1.5 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-lg shadow-xs transition"
+              >
+                Delete Course
+              </button>
+            </div>
           </div>
         </div>
       )}

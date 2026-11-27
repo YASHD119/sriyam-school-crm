@@ -142,6 +142,20 @@ export function App() {
     setCourses(prev => [newCourse, ...prev]);
   };
 
+  // Delete course
+  const handleDeleteCourse = (courseId: string) => {
+    setCourses(prev => prev.filter(c => c.id !== courseId));
+    logSecurityEvent({
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+      actorName: currentUser?.name || 'Admin',
+      actorRole: currentUser?.role || 'ADMIN',
+      action: 'DOCUMENT_VIEWED',
+      ipAddress: '10.0.1.5',
+      status: 'LOGGED',
+      details: `Course ${courseId} and associated materials deleted by Administrator.`
+    });
+  };
+
   // Add encrypted material to course
   const handleAddMaterialToCourse = (courseId: string, material: CourseMaterial, docPayload?: ProtectedDocument) => {
     setCourses(prev => prev.map(c => {
@@ -228,6 +242,7 @@ export function App() {
               documents={documents}
               onOpenDocument={handleOpenDoc}
               onAddCourse={handleAddCourse}
+              onDeleteCourse={handleDeleteCourse}
               onAddMaterialToCourse={handleAddMaterialToCourse}
               onLogSecurityEvent={logSecurityEvent}
             />
