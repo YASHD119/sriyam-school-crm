@@ -197,9 +197,9 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
     };
 
     onAddCourse(newCourse);
-    onAddMaterialToCourse(courseId, newMaterial, docPayload);
     setIsAddCourseModalOpen(false);
     setEncryptionStatus(null);
+    setExpandedCourseId(courseId); // auto-expand the newly created course
   };
 
   const handleAddMaterialSubmit = (e: React.FormEvent) => {
