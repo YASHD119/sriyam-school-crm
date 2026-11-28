@@ -31,7 +31,7 @@ interface CoursesViewProps {
   currentUser: UserSession;
   documents: ProtectedDocument[];
   onOpenDocument: (doc: ProtectedDocument) => void;
-  onAddCourse: (course: Course) => void;
+  onAddCourse: (course: Course, docPayload?: ProtectedDocument) => void;
   onDeleteCourse?: (courseId: string) => void;
   onAddMaterialToCourse: (courseId: string, material: CourseMaterial, docPayload?: ProtectedDocument) => void;
   onLogSecurityEvent?: (log: any) => void;
@@ -196,7 +196,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
       ]
     };
 
-    onAddCourse(newCourse);
+    onAddCourse(newCourse, docPayload);
     setIsAddCourseModalOpen(false);
     setEncryptionStatus(null);
     setExpandedCourseId(courseId); // auto-expand the newly created course

@@ -138,8 +138,11 @@ export function App() {
   };
 
   // Add new course (with initial encrypted PDF)
-  const handleAddCourse = (newCourse: Course) => {
+  const handleAddCourse = (newCourse: Course, docPayload?: ProtectedDocument) => {
     setCourses(prev => [newCourse, ...prev]);
+    if (docPayload) {
+      setDocuments(prev => [docPayload, ...prev]);
+    }
   };
 
   // Delete course
